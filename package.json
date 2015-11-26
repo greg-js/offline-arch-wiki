@@ -1,0 +1,34 @@
+{
+  "name": "offline-arch-wiki",
+  "version": "0.0.1",
+  "description": "Keep an hourly updated local arch wiki repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "patch-release": "npm version patch && npm publish && git push --follow-tags",
+    "minor-release": "npm version minor && npm publish && git push --follow-tags",
+    "major-release": "npm version major && npm publish && git push --folow-tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greg-js/offline-arch-wiki.git"
+  },
+  "keywords": [
+    "offline",
+    "arch",
+    "wiki"
+  ],
+  "author": "Gregory Scheerlinck",
+  "license": "GPL",
+  "bin": {
+    "sync-arch-wiki": "bin/sync.js"
+  },
+  "bugs": {
+    "url": "https://github.com/greg-js/offline-arch-wiki/issues"
+  },
+  "homepage": "https://github.com/greg-js/offline-arch-wiki#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mango": "0.0.4"
+  }
+}
