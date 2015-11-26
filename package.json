@@ -1,7 +1,7 @@
 {
   "name": "offline-arch-wiki",
   "version": "0.0.1",
-  "description": "Keep an hourly updated local arch wiki repository",
+  "description": "Tool for scraping the arch wiki and keeping it updated",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
