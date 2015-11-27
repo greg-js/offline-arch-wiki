@@ -16,7 +16,7 @@ describe('index.js', function() {
   });
 
   it('has a scrape method', function() {
-    expect(oaw.scrape).to.be.a('function');
+    expect(oaw.scrape).to.be.an('object');
   });
 
   it('has a save method', function() {
