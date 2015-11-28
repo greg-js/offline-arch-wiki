@@ -92,11 +92,11 @@ describe('fs.js', function() {
   });
 
   describe('fs.mkDir', function() {
-    it('makes a new directory', function(done) {
-      Promise.resolve(fs.mkDir('./', 'test dir')).then(function() {
+    // it('makes a new directory', function(done) {
+    //   Promise.resolve(fs.mkDir('./', 'test dir')).then(function() {
 
-      });
-    });
+    //   });
+    // });
 
   });
 
