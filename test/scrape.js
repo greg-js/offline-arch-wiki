@@ -107,7 +107,7 @@ describe('scrape.js', function() {
 
   describe('scrape.toc', function() {
     before(function(done) {
-      var mockRes = mock('<html><body><p>This should be ignored</p><div id="mw-content-text">This should get <strong>ignored</strong>.<dd><a href="some-url/Category:Test One">A test</a></dd><dd><a href="some-url/Category:Test Two">Test</a></dd><dd><a href="some-url/Category:Test One">A duplicate</a></dd></div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><p>This should be ignored</p><div id="mw-content-text">This should get <strong>ignored</strong>.<dd><a href="some-url/Category:Test One">A test</a></dd><dd><a href="some-url/Category:Test Two">Test</a></dd><dd>also in <a href="some-url/Category:Test One">A duplicate</a></dd></div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
