@@ -3,7 +3,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var fs = require('../lib/fs');
+var files = require('../lib/files');
 
 var Promise = require('bluebird');
 var fsUnlink = Promise.promisify(require('fs').unlink);
@@ -12,28 +12,28 @@ var fsReadFile = Promise.promisify(require('fs').readFile);
 
 var path = require('path');
 
-describe('fs.js', function() {
+describe('files.js', function() {
   describe('high level functionality', function() {
     it('has a save method', function() {
-      expect(fs.save).to.be.a('function');
+      expect(files.save).to.be.a('function');
     });
 
     it('has a mkDir method', function() {
-      expect(fs.mkDir).to.be.a('function');
+      expect(files.mkDir).to.be.a('function');
     });
 
     it('has a mkLink method', function() {
-      expect(fs.mkLink).to.be.a('function');
+      expect(files.mkLink).to.be.a('function');
     });
   });
 
-  describe('fs.save', function() {
+  describe('files.save', function() {
     describe('saving files in default directory', function() {
       var dest = path.join(process.cwd(), 'content', '_content', 'test title.md');
       var article = { md: 'some content', title: 'test title' };
 
       before(function(done) {
-        return Promise.resolve(fs.save(article)).then(function() {
+        return Promise.resolve(files.save(article)).then(function() {
           done();
         });
       });
@@ -64,7 +64,7 @@ describe('fs.js', function() {
       var article = { md: 'some content', title: 'test' };
 
       before(function(done) {
-        return Promise.resolve(fs.save(article, process.cwd())).then(function() {
+        return Promise.resolve(files.save(article, process.cwd())).then(function() {
           done();
         });
       });
@@ -91,17 +91,21 @@ describe('fs.js', function() {
     });
   });
 
-  describe('fs.mkDir', function() {
+  describe('files.mkDir', function() {
     // it('makes a new directory', function(done) {
-    //   Promise.resolve(fs.mkDir('./', 'test dir')).then(function() {
+    //   Promise.resolve(files.mkDir('./', 'test dir')).then(function() {
 
     //   });
     // });
 
   });
 
-  describe('fs.mkLink', function() {
+  describe('files.mkLink', function() {
+    var article = { md: 'some content', title: 'test'};
 
+    // before(function(done) {
+    //   Promise.resolve(files.save(article))
+    // });
   });
 
 });
