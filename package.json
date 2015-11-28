@@ -20,6 +20,7 @@
   "author": "Gregory Scheerlinck",
   "license": "GPL",
   "bin": {
+    "make-arch-wiki": "bin/make.js",
     "sync-arch-wiki": "bin/sync.js"
   },
   "bugs": {
