@@ -2,7 +2,6 @@
   "name": "offline-arch-wiki",
   "version": "0.0.1",
   "description": "Tool for scraping the arch wiki and keeping it updated",
-  "main": "index.js",
   "scripts": {
     "test": "mocha",
     "patch-release": "npm version patch && npm publish && git push --follow-tags",

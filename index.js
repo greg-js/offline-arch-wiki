@@ -1,10 +1,5 @@
 'use strict';
 
-exports.util = require('./lib/util');
-exports.processTOC = require('./lib/process-toc');
-exports.scrape = require('./lib/scrape');
-exports.save = require('./lib/save');
-
 // module.exports = function modExp(tocLink) {
 //   var util = require('./lib/util.js');
 //   var processTOC = require('./lib/process-toc');
