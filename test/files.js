@@ -18,22 +18,25 @@ describe('files.js', function() {
       expect(files.save).to.be.a('function');
     });
 
-    it('has a mkDir method', function() {
-      expect(files.mkDir).to.be.a('function');
-    });
+    // it('has a mkDir method', function() {
+    //   expect(files.mkDir).to.be.a('function');
+    // });
 
-    it('has a mkLink method', function() {
-      expect(files.mkLink).to.be.a('function');
-    });
+    // it('has a mkLink method', function() {
+    //   expect(files.mkLink).to.be.a('function');
+    // });
   });
 
   describe('files.save', function() {
     describe('saving files in default directory', function() {
       var dest = path.join(process.cwd(), 'content', '_content', 'test title.md');
-      var article = { md: 'some content', title: 'test title' };
+      var article = { md: 'some content', title: 'test title', parentCat: 'parent category' };
+
+      var savedArt;
 
       before(function(done) {
-        return Promise.resolve(files.save(article)).then(function() {
+        return Promise.resolve(files.save(article)).then(function(saved) {
+          savedArt = saved;
           done();
         });
       });
@@ -50,6 +53,14 @@ describe('files.js', function() {
           expect(content).to.equal('some content');
           done();
         });
+      });
+
+      it('returns an article object ready for making links', function(done) {
+        expect(savedArt).to.be.an('object');
+        expect(savedArt.title).to.equal('test title');
+        expect(savedArt.category).to.equal('parent category');
+        expect(savedArt.path).to.equal(dest);
+        done();
       });
 
       after(function(done) {
@@ -91,21 +102,21 @@ describe('files.js', function() {
     });
   });
 
-  describe('files.mkDir', function() {
-    // it('makes a new directory', function(done) {
-    //   Promise.resolve(files.mkDir('./', 'test dir')).then(function() {
+  // describe('files.mkDir', function() {
+  //   // it('makes a new directory', function(done) {
+  //   //   Promise.resolve(files.mkDir('./', 'test dir')).then(function() {
 
-    //   });
-    // });
+  //   //   });
+  //   // });
 
-  });
+  // });
 
-  describe('files.mkLink', function() {
-    var article = { md: 'some content', title: 'test'};
+  // describe('files.mkLink', function() {
+  //   var article = { md: 'some content', title: 'test'};
 
-    // before(function(done) {
-    //   Promise.resolve(files.save(article))
-    // });
-  });
+  //   // before(function(done) {
+  //   //   Promise.resolve(files.save(article))
+  //   // });
+  // });
 
 });
