@@ -28,6 +28,11 @@ describe('scrape.js', function() {
   });
 
   describe('scrape.article', function() {
+    var mockArtObj = {
+      url: 'some-url.com/article_title',
+      parentCat: 'parent category',
+    };
+
     before(function(done) {
       var mockRes = mock('<html><body><h1 id="firstHeading">Article Title</h1><p>This should be ignored</p><div id="content">This should get <strong>picked up</strong>.</div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
@@ -37,19 +42,25 @@ describe('scrape.js', function() {
     });
 
     it('gets the article\'s title', function(done) {
-      scrape.article('some-url.com/article_title').then(function(article) {
+      scrape.article(mockArtObj).then(function(article) {
         expect(article.title).to.equal('Article Title');
         done();
       });
     });
 
     it('converts the article\'s relevant html to markdown', function(done) {
-      scrape.article('some-url.com/article_title').then(function(article) {
+      scrape.article(mockArtObj).then(function(article) {
         expect(article.md).to.equal('This should get **picked up**.');
         done();
       });
     });
 
+    it('saves the article\'s parent category', function(done) {
+      scrape.article(mockArtObj).then(function(article) {
+        expect(article.parentCat).to.equal('parent category');
+        done();
+      });
+    });
     after(function(done) {
       mockery.disable();
       mockery.deregisterAll();
@@ -73,17 +84,18 @@ describe('scrape.js', function() {
       });
     });
 
-    it('saves the title of the category page', function(done) {
+    it('correctly saves the article urls', function(done) {
       scrape.category('some-url.com/Category:something').then(function(res) {
-        expect(res.title).to.equal('A Title');
+        expect(res.articles).to.be.an('array');
+        expect(res.articles[1].url).to.equal('https://wiki.archlinux.org/test-two.html');
         done();
       });
     });
 
-    it('correctly saves the article urls', function(done) {
+    it('saves the parent category page for every saved article url', function(done) {
       scrape.category('some-url.com/Category:something').then(function(res) {
-        expect(res.articles).to.be.an('array');
-        expect(res.articles[1]).to.equal('https://wiki.archlinux.org/test-two.html');
+        expect(res.articles[0].parentCategory).to.equal('A Title');
+        expect(res.articles[1].parentCategory).to.equal('A Title');
         done();
       });
     });
