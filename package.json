@@ -33,6 +33,7 @@
     "mockery": "^1.4.0"
   },
   "dependencies": {
-    "logme": "^0.4.0"
+    "logme": "^0.4.0",
+    "sanitize-filename": "^1.5.3"
   }
 }
