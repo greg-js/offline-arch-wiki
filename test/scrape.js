@@ -119,7 +119,7 @@ describe('scrape.js', function() {
 
   describe('scrape.toc', function() {
     before(function(done) {
-      var mockRes = mock('<html><body><p>This should be ignored</p><div id="mw-content-text">This should get <strong>ignored</strong>.<dd><a href="some-url/Category:Test One">A test</a></dd><dd><a href="some-url/Category:Test Two">Test</a></dd><dd>also in <a href="some-url/Category:Test One">A duplicate</a></dd></div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><p>This should be ignored</p><div id="mw-content-text">This should get <strong>ignored</strong>.<dd><a href="/index.php/Category:Test One">A test</a></dd><dd><a href="/index.php/Category:Test Two">Test</a></dd><dd>also in <a href="/index.php/Category:Test One">A duplicate</a></dd></div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
@@ -127,16 +127,16 @@ describe('scrape.js', function() {
     });
 
     it('saves the category urls from the TOC', function(done) {
-      scrape.toc('some-url.com/Table_of_contents').then(function(urls) {
+      scrape.toc('/Table_of_contents').then(function(urls) {
         expect(urls).to.be.an('array');
-        expect(urls[0]).to.equal('some-url/Category:Test One');
-        expect(urls[1]).to.equal('some-url/Category:Test Two');
+        expect(urls[0]).to.equal('https://wiki.archlinux.org/index.php/Category:Test One');
+        expect(urls[1]).to.equal('https://wiki.archlinux.org/index.php/Category:Test Two');
         done();
       });
     });
 
     it('filters out duplicate urls', function(done) {
-      scrape.toc('some-url.com/Table_of_contents').then(function(urls) {
+      scrape.toc('/Table_of_contents').then(function(urls) {
         expect(urls.length).to.equal(2);
         done();
       });
