@@ -8,42 +8,29 @@ The ArchHaskell group works on providing [Haskell](/index.php/Haskell "Haskell")
 
 ## Contents
 
-* [1 Resources](#Resources)
-
-* [2 Membership](#Membership)
-
-* [3 Available repositories](#Available_repositories)
-* [3.1 [haskell-core]](#.5Bhaskell-core.5D)
-
-* [3.2 [haskell-happstack]](#.5Bhaskell-happstack.5D)
-
-* [3.3 [haskell-web]](#.5Bhaskell-web.5D)
-
-* [4 Improving ArchHaskell](#Improving_ArchHaskell)
-* [4.1 Community](#Community)
-
-* [4.2 Overview](#Overview)
-
-* [4.3 [haskell-core] maintenance](#.5Bhaskell-core.5D_maintenance)
-
-* [4.4 Other repo maintenance](#Other_repo_maintenance)
-
-* [4.5 Creating another repo](#Creating_another_repo)
-
-* [4.6 List of satellite repos](#List_of_satellite_repos)
-
-* [5 Troubleshooting](#Troubleshooting)
-* [5.1 Switching to ArchHaskell repository](#Switching_to_ArchHaskell_repository)
+*   [1 Resources](#Resources)
+*   [2 Membership](#Membership)
+*   [3 Available repositories](#Available_repositories)
+    *   [3.1 [haskell-core]](#.5Bhaskell-core.5D)
+    *   [3.2 [haskell-happstack]](#.5Bhaskell-happstack.5D)
+    *   [3.3 [haskell-web]](#.5Bhaskell-web.5D)
+*   [4 Improving ArchHaskell](#Improving_ArchHaskell)
+    *   [4.1 Community](#Community)
+    *   [4.2 Overview](#Overview)
+    *   [4.3 [haskell-core] maintenance](#.5Bhaskell-core.5D_maintenance)
+    *   [4.4 Other repo maintenance](#Other_repo_maintenance)
+    *   [4.5 Creating another repo](#Creating_another_repo)
+    *   [4.6 List of satellite repos](#List_of_satellite_repos)
+*   [5 Troubleshooting](#Troubleshooting)
+    *   [5.1 Switching to ArchHaskell repository](#Switching_to_ArchHaskell_repository)
 
 ## Resources
 
 The main resources for the **ArchHaskell** community to interact and discuss are:
 
-* #archlinux-haskell IRC channel @ freenode.org
-
-* arch-haskell@haskell.org [mailing list](http://haskell.org/mailman/listinfo/arch-haskell) and [archives](http://www.haskell.org/pipermail/arch-haskell)
-
-* [ArchHaskell group](https://github.com/archhaskell) on GitHub
+*   #archlinux-haskell IRC channel @ freenode.org
+*   arch-haskell@haskell.org [mailing list](http://haskell.org/mailman/listinfo/arch-haskell) and [archives](http://www.haskell.org/pipermail/arch-haskell)
+*   [ArchHaskell group](https://github.com/archhaskell) on GitHub
 
 ## Membership
 
@@ -51,9 +38,8 @@ Membership is not required at all in order to contribute. Just fork the relevant
 
 There are currently two people with commit rights to the ArchHaskell repository at GitHub:
 
-* Magnus Therning
-
-* Leif Warner
+*   Magnus Therning
+*   Leif Warner
 
 ## Available repositories
 
@@ -150,17 +136,15 @@ The plan is to have one user-facing repository, [haskell], which merges the pack
 
 Ensure:
 
-* [haskell-core] is an Arch repo hosted at kiwilight and xsounds.
-
-* [haskell-core] is in sync with the [habs](https://github.com/archhaskell/habs) cblrepo database.
+*   [haskell-core] is an Arch repo hosted at kiwilight and xsounds.
+*   [haskell-core] is in sync with the [habs](https://github.com/archhaskell/habs) cblrepo database.
 
 ### Other repo maintenance
 
 For example, for haskell-foo, ensure:
 
-* haskell-foo is a cblrepo database, possibly using packages from [haskell-core] as DistroPkgs.
-
-* Whenever [haskell-core] is updated, haskell-foo's database is updated to match within a reasonable time.
+*   haskell-foo is a cblrepo database, possibly using packages from [haskell-core] as DistroPkgs.
+*   Whenever [haskell-core] is updated, haskell-foo's database is updated to match within a reasonable time.
 
 ### Creating another repo
 
@@ -176,4 +160,4 @@ Retrieved from "[https://wiki.archlinux.org/index.php?title=ArchHaskell&oldid=37
 
 [Category](/index.php/Special:Categories "Special:Categories"):
 
-* [Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Package development](/index.php/Category:Package_development "Category:Package development")

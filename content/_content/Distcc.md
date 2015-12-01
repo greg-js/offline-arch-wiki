@@ -6,55 +6,38 @@ Jump to: [navigation](#column-one), [search](#searchInput)
 
 Related articles
 
-* [TORQUE](/index.php/TORQUE "TORQUE")
-
-* [Slurm](/index.php/Slurm "Slurm")
+*   [TORQUE](/index.php/TORQUE "TORQUE")
+*   [Slurm](/index.php/Slurm "Slurm")
 
 Distcc is a program to distribute builds of C, C++, Objective C or Objective C++ code across several machines on a network. distcc should always generate the same results as a local build, is simple to install and use, and is usually much faster than a local compile. The cool part is one can use it together with pacman/srcpac.
 
 ## Contents
 
-* [1 Terms](#Terms)
-
-* [2 Getting started](#Getting_started)
-
-* [3 Configuration](#Configuration)
-* [3.1 Slaves](#Slaves)
-
-* [3.2 Master](#Master)
-* [3.2.1 Standalone](#Standalone)
-
-* [3.2.2 Makepkg](#Makepkg)
-
-* [4 Compile](#Compile)
-* [4.1 Standalone](#Standalone_2)
-
-* [4.2 Makepkg](#Makepkg_2)
-
-* [5 Monitoring progress](#Monitoring_progress)
-
-* [6 "Cross Compiling" with distcc](#.22Cross_Compiling.22_with_distcc)
-* [6.1 X86](#X86)
-* [6.1.1 Chroot method (preferred)](#Chroot_method_.28preferred.29)
-* [6.1.1.1 Add port numbers to DISTCC_HOSTS on the i686 chroot](#Add_port_numbers_to_DISTCC_HOSTS_on_the_i686_chroot)
-
-* [6.1.1.2 Invoke makepkg from the Native Environment](#Invoke_makepkg_from_the_Native_Environment)
-
-* [6.1.2 Multilib GCC method (not recommended)](#Multilib_GCC_method_.28not_recommended.29)
-
-* [6.2 Other architectures](#Other_architectures)
-
-* [7 Troubleshooting](#Troubleshooting)
-* [7.1 Journalctl](#Journalctl)
-
-* [7.2 code 110](#code_110)
-
-* [7.3 Adjust log level](#Adjust_log_level)
-
-* [7.4 Failure work with CMake or other tools](#Failure_work_with_CMake_or_other_tools)
-
-* [7.5 Limit HDD/SSD usage](#Limit_HDD.2FSSD_usage)
-* [7.5.1 Relocate $HOME/.distcc](#Relocate_.24HOME.2F.distcc)
+*   [1 Terms](#Terms)
+*   [2 Getting started](#Getting_started)
+*   [3 Configuration](#Configuration)
+    *   [3.1 Slaves](#Slaves)
+    *   [3.2 Master](#Master)
+        *   [3.2.1 Standalone](#Standalone)
+        *   [3.2.2 Makepkg](#Makepkg)
+*   [4 Compile](#Compile)
+    *   [4.1 Standalone](#Standalone_2)
+    *   [4.2 Makepkg](#Makepkg_2)
+*   [5 Monitoring progress](#Monitoring_progress)
+*   [6 "Cross Compiling" with distcc](#.22Cross_Compiling.22_with_distcc)
+    *   [6.1 X86](#X86)
+        *   [6.1.1 Chroot method (preferred)](#Chroot_method_.28preferred.29)
+            *   [6.1.1.1 Add port numbers to DISTCC_HOSTS on the i686 chroot](#Add_port_numbers_to_DISTCC_HOSTS_on_the_i686_chroot)
+            *   [6.1.1.2 Invoke makepkg from the Native Environment](#Invoke_makepkg_from_the_Native_Environment)
+        *   [6.1.2 Multilib GCC method (not recommended)](#Multilib_GCC_method_.28not_recommended.29)
+    *   [6.2 Other architectures](#Other_architectures)
+*   [7 Troubleshooting](#Troubleshooting)
+    *   [7.1 Journalctl](#Journalctl)
+    *   [7.2 code 110](#code_110)
+    *   [7.3 Adjust log level](#Adjust_log_level)
+    *   [7.4 Failure work with CMake or other tools](#Failure_work_with_CMake_or_other_tools)
+    *   [7.5 Limit HDD/SSD usage](#Limit_HDD.2FSSD_usage)
+        *   [7.5.1 Relocate $HOME/.distcc](#Relocate_.24HOME.2F.distcc)
 
 ## Terms
 
@@ -104,7 +87,8 @@ $ export DISTCC_HOSTS="192.168.0.3,lzo,cpp 192.168.0.4,lzo,cpp"
 
 Example for setting the slave addresses in the hosts configuration file:
 
-`~/.distcc/hosts`
+ `~/.distcc/hosts` 
+
 ```
 192.168.0.3,lzo,cpp 192.168.0.4,lzo,cpp
 
@@ -114,9 +98,8 @@ Instead of explicitly listing the server addresses one can also use the avahi ze
 
 The examples add the following options to the address:
 
-* `lzo`: Enables LZO compression for this TCP or SSH host (slave).
-
-* `cpp`: Enables distcc-pump mode for this host (slave). Note: the build command must be wrapped in the pump script in order to start the include server.
+*   `lzo`: Enables LZO compression for this TCP or SSH host (slave).
+*   `cpp`: Enables distcc-pump mode for this host (slave). Note: the build command must be wrapped in the pump script in order to start the include server.
 
 A description for the pump mode can be found here: [HOW DISTCC-PUMP MODE WORKS](http://distcc.googlecode.com/svn%20...%20%3Cdiv%20class=/trunk/doc/web/man/distcc_1.html#TOC_8) and [distcc's pump mode: A New Design for Distributed C/C++ Compilation](http://google-opensource.blogspot.de/2008/08/distccs-pump-mode-new-design-for.html)
 
@@ -126,11 +109,9 @@ To use distcc-pump mode for a slave, users must start the compilation using the 
 
 Edit `/etc/makepkg.conf` in the following three sections:
 
-* BUILDENV has distcc unbanged i.e. without exclamation point.
-
-* Uncomment the _DISTCC_HOSTS_ line and add the IP addresses of the slaves then a slash and the number of threads they are to use. The subsequent IP address/threads should be separated by a white space. This list is ordered from most powerful to least powerful (processing power).
-
-* Adjust the MAKEFLAGS variable to correspond to the number of sum of the number of individual values specified for the max threads per server. In the example below, this is 5+3+3=11\. If users specify more than this sum, the extra theoretical thread(s) will be blocked by distcc and appear as such in monitoring utils such as _distccmon-text_ described below.
+1.  BUILDENV has distcc unbanged i.e. without exclamation point.
+2.  Uncomment the _DISTCC_HOSTS_ line and add the IP addresses of the slaves then a slash and the number of threads they are to use. The subsequent IP address/threads should be separated by a white space. This list is ordered from most powerful to least powerful (processing power).
+3.  Adjust the MAKEFLAGS variable to correspond to the number of sum of the number of individual values specified for the max threads per server. In the example below, this is 5+3+3=11\. If users specify more than this sum, the extra theoretical thread(s) will be blocked by distcc and appear as such in monitoring utils such as _distccmon-text_ described below.
 
 **Note:** It is common practice to define the number of threads as the number of physical core+hyperhtreaded cores (if they exist) plus 1\. Do this on a per-server basis, NOT in the MAKEFLAGS!
 
@@ -179,9 +160,8 @@ Compile via makepkg as normal.
 
 Progress can be monitored via several methods.
 
-* distccmon-text
-
-* tailing log file
+1.  distccmon-text
+2.  tailing log file
 
 Invoke distccmon-text to check on compilation status:
 
@@ -287,11 +267,9 @@ Remember to remove or modify `$HOME/.makepkg.conf` when finished compiling i686 
 
 Users wishing to cross compile for other architectures, need to install a cross compile environment on the slave(s). Either build a cross compile tool chain, or use a pre-configured one. This section is mainly about an ARM cross compilation tool chain but most of the information should be valid for other architectures also. There are several possibilities for getting the tool chain:
 
-* [EmbToolkit](https://embtoolkit.org/): Tool for creating cross compilation tool chain; supports ARM and MIPS architectures; supports building of an LLVM based tool chain
-
-* [crosstool-ng](http://crosstool-ng.org/): Similar to EmbToolkit; supports more architectures (see website for more information)
-
-* [Linaro](https://www.linaro.org/downloads/): Provides tool chains for ARM development
+*   [EmbToolkit](https://embtoolkit.org/): Tool for creating cross compilation tool chain; supports ARM and MIPS architectures; supports building of an LLVM based tool chain
+*   [crosstool-ng](http://crosstool-ng.org/): Similar to EmbToolkit; supports more architectures (see website for more information)
+*   [Linaro](https://www.linaro.org/downloads/): Provides tool chains for ARM development
 
 The `EmbToolkit` provides a nice graphical configuration menu (`make xconfig`) for configuring the tool chain.
 
@@ -299,7 +277,8 @@ Make sure that the execute bit is set on all folders in the tree leading to the 
 
 Normally the executables will have some prefixes for example `gcc` could look like this: `arm-unknown-linux-gnueabihf-gcc`. To make the name consistent with the names distcc expects, execute the following script in the folder where the binary files reside:
 
-`create_links.sh`
+ `create_links.sh` 
+
 ```
 #!/bin/bash
 for file in `ls`; do
@@ -330,7 +309,8 @@ $ ./create_links.sh arm-cortex_a8-linux-gnueabihf-
 
 Now adjust the distccd configuration so that the cross compiler will be found first in the path:
 
-`/etc/conf.d/distccd`
+ `/etc/conf.d/distccd` 
+
 ```
 #
 # Parameters to be passed to distccd
@@ -359,7 +339,8 @@ $ journalctl $(which distccd) -e --since "5 min ago"
 
 Make sure that the tool chain works for the user account under which the distcc daemon process gets started (default is nobody). The following will test if the tool chain works for user nobody. In `/etc/passwd` change the login for the nobody user to the following:
 
-`$ cat /etc/passwd`
+ `$ cat /etc/passwd` 
+
 ```
 ...
 nobody:x:99:99:nobody:/:/bin/bash
@@ -411,7 +392,8 @@ Use systemd to re-create this directory on a reboot (the soft link will remain u
 
 Create the following tmpfile.
 
-`/etc/tmpfiles.d/tmpfs-create.conf`
+ `/etc/tmpfiles.d/tmpfs-create.conf` 
+
 ```
 d /tmp/.distcc 0755 <username> users -
 
@@ -421,6 +403,5 @@ Retrieved from "[https://wiki.archlinux.org/index.php?title=Distcc&oldid=408220]
 
 [Categories](/index.php/Special:Categories "Special:Categories"):
 
-* [Package development](/index.php/Category:Package_development "Category:Package development")
-
-* [Distributed computing](/index.php/Category:Distributed_computing "Category:Distributed computing")
+*   [Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Distributed computing](/index.php/Category:Distributed_computing "Category:Distributed computing")

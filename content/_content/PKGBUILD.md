@@ -6,21 +6,14 @@ Jump to: [navigation](#column-one), [search](#searchInput)
 
 Related articles
 
-* [Arch packaging standards](/index.php/Arch_packaging_standards "Arch packaging standards")
-
-* [Arch Build System](/index.php/Arch_Build_System "Arch Build System")
-
-* [Creating packages](/index.php/Creating_packages "Creating packages")
-
-* [Category:Package development](/index.php/Category:Package_development "Category:Package development")
-
-* [Pacman tips](/index.php/Pacman_tips "Pacman tips")
-
-* [Arch User Repository](/index.php/Arch_User_Repository "Arch User Repository")
-
-* [makepkg](/index.php/Makepkg "Makepkg")
-
-* [pacman](/index.php/Pacman "Pacman")
+*   [Arch packaging standards](/index.php/Arch_packaging_standards "Arch packaging standards")
+*   [Arch Build System](/index.php/Arch_Build_System "Arch Build System")
+*   [Creating packages](/index.php/Creating_packages "Creating packages")
+*   [Category:Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Pacman tips](/index.php/Pacman_tips "Pacman tips")
+*   [Arch User Repository](/index.php/Arch_User_Repository "Arch User Repository")
+*   [makepkg](/index.php/Makepkg "Makepkg")
+*   [pacman](/index.php/Pacman "Pacman")
 
 This article discusses variables definable by the maintainer in a PKGBUILD. For information on the PKGBUILD functions and creating packages in general, refer to [Creating packages](/index.php/Creating_packages "Creating packages"). Also read `man PKGBUILD`.
 
@@ -34,71 +27,43 @@ It is a common practice to define the variables in the PKGBUILD in same order as
 
 ## Contents
 
-* [1 Package name](#Package_name)
-* [1.1 pkgbase](#pkgbase)
-
-* [1.2 pkgname](#pkgname)
-
-* [2 Version](#Version)
-* [2.1 pkgver](#pkgver)
-
-* [2.2 pkgrel](#pkgrel)
-
-* [2.3 epoch](#epoch)
-
-* [3 Generic](#Generic)
-* [3.1 pkgdesc](#pkgdesc)
-
-* [3.2 arch](#arch)
-
-* [3.3 url](#url)
-
-* [3.4 license](#license)
-
-* [3.5 groups](#groups)
-
-* [4 Dependencies](#Dependencies)
-* [4.1 depends](#depends)
-
-* [4.2 optdepends](#optdepends)
-
-* [4.3 makedepends](#makedepends)
-
-* [4.4 checkdepends](#checkdepends)
-
-* [5 Package relations](#Package_relations)
-* [5.1 provides](#provides)
-
-* [5.2 conflicts](#conflicts)
-
-* [5.3 replaces](#replaces)
-
-* [6 Others](#Others)
-* [6.1 backup](#backup)
-
-* [6.2 options](#options)
-
-* [6.3 install](#install)
-
-* [6.4 changelog](#changelog)
-
-* [7 Sources](#Sources)
-* [7.1 source](#source)
-
-* [7.2 noextract](#noextract)
-
-* [7.3 validpgpkeys](#validpgpkeys)
-
-* [8 Integrity](#Integrity)
-* [8.1 md5sums](#md5sums)
-
-* [8.2 sha1sums](#sha1sums)
-
-* [8.3 sha256sums](#sha256sums)
-
-* [8.4 sha224sums, sha384sums, sha512sums](#sha224sums.2C_sha384sums.2C_sha512sums)
-
-* [9 See also](#See_also)
+*   [1 Package name](#Package_name)
+    *   [1.1 pkgbase](#pkgbase)
+    *   [1.2 pkgname](#pkgname)
+*   [2 Version](#Version)
+    *   [2.1 pkgver](#pkgver)
+    *   [2.2 pkgrel](#pkgrel)
+    *   [2.3 epoch](#epoch)
+*   [3 Generic](#Generic)
+    *   [3.1 pkgdesc](#pkgdesc)
+    *   [3.2 arch](#arch)
+    *   [3.3 url](#url)
+    *   [3.4 license](#license)
+    *   [3.5 groups](#groups)
+*   [4 Dependencies](#Dependencies)
+    *   [4.1 depends](#depends)
+    *   [4.2 optdepends](#optdepends)
+    *   [4.3 makedepends](#makedepends)
+    *   [4.4 checkdepends](#checkdepends)
+*   [5 Package relations](#Package_relations)
+    *   [5.1 provides](#provides)
+    *   [5.2 conflicts](#conflicts)
+    *   [5.3 replaces](#replaces)
+*   [6 Others](#Others)
+    *   [6.1 backup](#backup)
+    *   [6.2 options](#options)
+    *   [6.3 install](#install)
+    *   [6.4 changelog](#changelog)
+*   [7 Sources](#Sources)
+    *   [7.1 source](#source)
+    *   [7.2 noextract](#noextract)
+    *   [7.3 validpgpkeys](#validpgpkeys)
+*   [8 Integrity](#Integrity)
+    *   [8.1 md5sums](#md5sums)
+    *   [8.2 sha1sums](#sha1sums)
+    *   [8.3 sha256sums](#sha256sums)
+    *   [8.4 sha224sums, sha384sums, sha512sums](#sha224sums.2C_sha384sums.2C_sha512sums)
+*   [9 See also](#See_also)
 
 ## Package name
 
@@ -126,6 +91,8 @@ The version of the package. This should be the same as the version released by t
 
 Release number: this value allows users to differentiate between consecutive builds of the same version of a package. As fixes and additional features are added to the PKGBUILD that influence the resulting package, the `pkgrel` should be incremented by 1\. When a new version of the software is released, this value must be reset to 1.
 
+In official packages, this is usually, but not always, a positive integer number. Some packages sometimes use a `\d+\.\d+` syntax, e.g. as of the time of this writing, 2.1 in package `virtualbox-guest-modules-5.0.10-2.1`.
+
 ### epoch
 
 **Warning:** `epoch` should only be used when absolutely required to do so.
@@ -137,7 +104,8 @@ pkgver=5.13
 pkgrel=2
 epoch=1
 ```
-`1:5.13-2`
+
+ `1:5.13-2` 
 
 See [pacman(8)](https://www.archlinux.org/pacman/pacman.8.html) for more information on version comparisons.
 
@@ -167,22 +135,16 @@ The URL of the official site of the software being packaged.
 
 The license under which the software is distributed. The [licenses](https://www.archlinux.org/packages/?name=licenses) package from the [official repositories](/index.php/Official_repositories "Official repositories") contains many commonly used licenses, which are installed to `/usr/share/licenses/common`. If a package is licensed under one of these licenses, the value should be set to the directory name, e.g. `license=('GPL')`. If the appropriate license is not included, several things must be done:
 
-* Add `custom` to the `license` array. Optionally, you can replace `custom` with `custom:_name of license_`. Once a license is used in two or more packages in an official repository (including `[community]`), it becomes a part of the [licenses](https://www.archlinux.org/packages/?name=licenses) package.
+1.  Add `custom` to the `license` array. Optionally, you can replace `custom` with `custom:_name of license_`. Once a license is used in two or more packages in an official repository (including `[community]`), it becomes a part of the [licenses](https://www.archlinux.org/packages/?name=licenses) package.
+2.  Install the license in: `/usr/share/licenses/_pkgname_/`, e.g. `/usr/share/licenses/foobar/LICENSE`.
+3.  If the license is only found in a website, then you need to separately include it in the package.
 
-* Install the license in: `/usr/share/licenses/_pkgname_/`, e.g. `/usr/share/licenses/foobar/LICENSE`.
-
-* If the license is only found in a website, then you need to separately include it in the package.
-
-* The [BSD](https://en.wikipedia.org/wiki/BSD_License "wikipedia:BSD License"), [MIT](https://en.wikipedia.org/wiki/MIT_License "wikipedia:MIT License"), [zlib/png](https://en.wikipedia.org/wiki/ZLIB_license "wikipedia:ZLIB license") and [Python](https://en.wikipedia.org/wiki/Python_License "wikipedia:Python License") licenses are special cases and could not be included in the [licenses](https://www.archlinux.org/packages/?name=licenses) package. For the sake of the `license` array, it is treated as a common license (`license=('BSD')`, `license=('MIT')`, `license=('ZLIB')` and `license=('Python')`), but technically each one is a custom license, because each one has its own copyright line. Any packages licensed under these four should have its own unique license stored in `/usr/share/licenses/_pkgname_`. Some packages may not be covered by a single license. In these cases, multiple entries may be made in the `license` array, e.g. `license=('GPL' 'custom:_name of license'_)`.
-
-* (L)GPL has many versions and permutations of those versions. For (L)GPL software, the convention is:
-* (L)GPL — (L)GPLv2 or any later version
-
-* (L)GPL2 — (L)GPL2 only
-
-* (L)GPL3 — (L)GPL3 or any later version
-
-* If after researching the issue no license can be determined, [PKGBUILD.proto](https://projects.archlinux.org/pacman.git/tree/proto/PKGBUILD.proto) suggests using `unknown`. However, upstream should be contacted about the conditions under which the software is (and is not) available.
+*   The [BSD](https://en.wikipedia.org/wiki/BSD_License "wikipedia:BSD License"), [MIT](https://en.wikipedia.org/wiki/MIT_License "wikipedia:MIT License"), [zlib/png](https://en.wikipedia.org/wiki/ZLIB_license "wikipedia:ZLIB license") and [Python](https://en.wikipedia.org/wiki/Python_License "wikipedia:Python License") licenses are special cases and could not be included in the [licenses](https://www.archlinux.org/packages/?name=licenses) package. For the sake of the `license` array, it is treated as a common license (`license=('BSD')`, `license=('MIT')`, `license=('ZLIB')` and `license=('Python')`), but technically each one is a custom license, because each one has its own copyright line. Any packages licensed under these four should have its own unique license stored in `/usr/share/licenses/_pkgname_`. Some packages may not be covered by a single license. In these cases, multiple entries may be made in the `license` array, e.g. `license=('GPL' 'custom:_name of license'_)`.
+*   (L)GPL has many versions and permutations of those versions. For (L)GPL software, the convention is:
+    *   (L)GPL — (L)GPLv2 or any later version
+    *   (L)GPL2 — (L)GPL2 only
+    *   (L)GPL3 — (L)GPL3 or any later version
+*   If after researching the issue no license can be determined, [PKGBUILD.proto](https://projects.archlinux.org/pacman.git/tree/proto/PKGBUILD.proto) suggests using `unknown`. However, upstream should be contacted about the conditions under which the software is (and is not) available.
 
 **Tip:** Some software authors do not provide separate license file and describe distribution rules in section of common `ReadMe.txt`. This information can be extracted to a separate file during `build()` with something like `sed -n '/**This software**/,/ **thereof.**/p' ReadMe.txt > LICENSE`
 
@@ -222,6 +184,7 @@ optdepends=('cups: printing support'
 An array of packages that are **only** required to build the software. The minimum dependency version can be specified in the same format as in the `depends` array.
 
 **Tip:** The following can be used to see if a particular package is either in the [base-devel](https://www.archlinux.org/groups/x86_64/base-devel/) group or pulled in by a members of the group:
+
 ```
 $ pacman -Si $(pactree -rl _package_) 2>/dev/null | grep -q "^Groups *:.*base-devel"
 
@@ -275,17 +238,12 @@ The full list of the available options can be found in [PKGBUILD(5)](https://www
 
 The name of the `.install` script to be included in the package. This should be the same as `pkgname`. _pacman_ has the ability to store and execute a package-specific script when it installs, removes or upgrades a package. The script contains the following functions which run at different times:
 
-* `pre_install` — The script is run right before files are extracted. One argument is passed: new package version.
-
-* `post_install` — The script is run right after files are extracted. One argument is passed: new package version.
-
-* `pre_upgrade` — The script is run right before files are extracted. Two arguments are passed in the following order: new package version, old package version.
-
-* `post_upgrade` — The script is run right after files are extracted. Two arguments are passed in the following order: new package version, old package version.
-
-* `pre_remove` — The script is run right before files are removed. One argument is passed: old package version.
-
-* `post_remove` — The script is run right after files are removed. One argument is passed: old package version.
+*   `pre_install` — The script is run right before files are extracted. One argument is passed: new package version.
+*   `post_install` — The script is run right after files are extracted. One argument is passed: new package version.
+*   `pre_upgrade` — The script is run right before files are extracted. Two arguments are passed in the following order: new package version, old package version.
+*   `post_upgrade` — The script is run right after files are extracted. Two arguments are passed in the following order: new package version, old package version.
+*   `pre_remove` — The script is run right before files are removed. One argument is passed: old package version.
+*   `post_remove` — The script is run right after files are removed. One argument is passed: old package version.
 
 Each function is run [chrooted](/index.php/Chroot "Chroot") inside the _pacman_ install directory. See [this thread](https://bbs.archlinux.org/viewtopic.php?pid=913891).
 
@@ -312,7 +270,7 @@ Files can also be supplied directly in the location of the `PKGBUILD` and added 
 
 **Note:** _.install_ files should not be included.
 
-**Tip:** An alternative source name for the downloaded file can be specified with the syntax `source=('_filename_::_fileuri_')`:`source=("project_name::hg+https://googlefontdirectory.googlecode.com/hg/")`
+**Tip:** An alternative source name for the downloaded file can be specified with the syntax `source=('_filename_::_fileuri_')`: `source=("project_name::hg+https://googlefontdirectory.googlecode.com/hg/")` 
 
 Files in the source array with extensions _.sig_, _.sign_, or _.asc_ are recognized by _makepkg_ as PGP signatures and will be automatically used to verify the integrity of the corresponding source file.
 
@@ -378,12 +336,11 @@ An array of SHA-2 checksums with digest sizes 224, 384, and 512 bits, respective
 
 ## See also
 
-* [PKGBUILD(5) Manual Page](https://www.archlinux.org/pacman/PKGBUILD.5.html)
+*   [PKGBUILD(5) Manual Page](https://www.archlinux.org/pacman/PKGBUILD.5.html)
+*   [Example PKGBUILD file](http://ix.io/kXu)
 
-* [Example PKGBUILD file](http://ix.io/kXu)
-
-Retrieved from "[https://wiki.archlinux.org/index.php?title=PKGBUILD&oldid=409475](https://wiki.archlinux.org/index.php?title=PKGBUILD&oldid=409475)"
+Retrieved from "[https://wiki.archlinux.org/index.php?title=PKGBUILD&oldid=410686](https://wiki.archlinux.org/index.php?title=PKGBUILD&oldid=410686)"
 
 [Category](/index.php/Special:Categories "Special:Categories"):
 
-* [Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Package development](/index.php/Category:Package_development "Category:Package development")

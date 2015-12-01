@@ -8,13 +8,10 @@ Jump to: [navigation](#column-one), [search](#searchInput)
 
 ## Contents
 
-* [1 Installation](#Installation)
-
-* [2 Build packages with Clang](#Build_packages_with_Clang)
-
-* [3 Using the Static Analyzer](#Using_the_Static_Analyzer)
-
-* [4 References](#References)
+*   [1 Installation](#Installation)
+*   [2 Build packages with Clang](#Build_packages_with_Clang)
+*   [3 Using the Static Analyzer](#Using_the_Static_Analyzer)
+*   [4 References](#References)
 
 ## Installation
 
@@ -35,7 +32,7 @@ $ scan-build make
 
 ```
 
-**Tip:** If your project is already compiled, `scan-build` won't rebuild and won't analyse it. To force recompilation and analysis, use `-B` switch:`$ scan-build make -B`
+**Tip:** If your project is already compiled, `scan-build` won't rebuild and won't analyse it. To force recompilation and analysis, use `-B` switch: `$ scan-build make -B` 
 
 It is also possible to analyze specific files:
 
@@ -46,10 +43,10 @@ $ scan-build gcc -c t1.c t2.c
 
 ## References
 
-* [scan-build: running the analyzer from the command line](http://clang-analyzer.llvm.org/scan-build.html)
+*   [scan-build: running the analyzer from the command line](http://clang-analyzer.llvm.org/scan-build.html)
 
 Retrieved from "[https://wiki.archlinux.org/index.php?title=Clang&oldid=361634](https://wiki.archlinux.org/index.php?title=Clang&oldid=361634)"
 
 [Category](/index.php/Special:Categories "Special:Categories"):
 
-* [Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Package development](/index.php/Category:Package_development "Category:Package development")

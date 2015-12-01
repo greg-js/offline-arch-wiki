@@ -20,6 +20,5 @@ Retrieved from "[https://wiki.archlinux.org/index.php?title=Jenkins&oldid=391153
 
 [Categories](/index.php/Special:Categories "Special:Categories"):
 
-* [Package development](/index.php/Category:Package_development "Category:Package development")
-
-* [Web server](/index.php/Category:Web_server "Category:Web server")
+*   [Package development](/index.php/Category:Package_development "Category:Package development")
+*   [Web server](/index.php/Category:Web_server "Category:Web server")
