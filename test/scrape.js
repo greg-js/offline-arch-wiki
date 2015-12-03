@@ -30,7 +30,6 @@ describe('scrape.js', function() {
   describe('scrape.article', function() {
     var mockArtObj = {
       url: 'some-url.com/article_title',
-      parentCat: 'parent category',
     };
 
     before(function(done) {
@@ -55,12 +54,6 @@ describe('scrape.js', function() {
       });
     });
 
-    it('saves the article\'s parent category', function(done) {
-      scrape.article(mockArtObj).then(function(article) {
-        expect(article.parentCat).to.equal('parent category');
-        done();
-      });
-    });
     after(function(done) {
       mockery.disable();
       mockery.deregisterAll();
@@ -69,8 +62,10 @@ describe('scrape.js', function() {
   });
 
   describe('scrape.category', function() {
+    var mockDoneList = [{title: 'some title'}, {title: 'another existing title'}];
+
     before(function(done) {
-      var mockRes = mock('<html><body><h1 id="firstHeading">Category:A Title</h1><p>This should be ignored</p><div id="mw-subcategories">More to ignore.<ul><li><a href="/index.php/Category:testing">first cat title</a></li><li><a href="/index.php/Category:another_test">second cat title</a></li></ul></div><div id="mw-pages">This should get <strong>ignored</strong>.<ul><li><a href="/test-one.html">One link</a></li><li><a href="/test-two.html">Link two</a></li></ul></div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><h1 id="firstHeading">Category:A Title</h1><p>This should be ignored</p><div id="mw-subcategories">More to ignore.<ul><li><a href="/index.php/Category:testing" title="first cat title">first cat title</a></li><li><a href="/index.php/Category:another_test" title="another test">second cat title</a></li></ul></div><div id="mw-pages">This should get <strong>ignored</strong>.<ul><li><a href="/test-one.html" title="One link">One link</a></li><li><a href="/test-two.html" title="Link two">Link two</a></li><li><a href="/test-three.html" title="another existing title">Link three</a></li>"</ul></div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
@@ -78,34 +73,30 @@ describe('scrape.js', function() {
     });
 
     it('processes the urls in the category page', function(done) {
-      scrape.category('some-url.com/Category:something').then(function(res) {
+      scrape.category('some-url.com/Category:something', mockDoneList).then(function(res) {
         expect(res).to.be.an('object');
         done();
       });
     });
 
-    it('correctly saves the article urls', function(done) {
-      scrape.category('some-url.com/Category:something').then(function(res) {
+    it('saves the article urls', function(done) {
+      scrape.category('some-url.com/Category:something', mockDoneList).then(function(res) {
         expect(res.articles).to.be.an('array');
         expect(res.articles[1].url).to.equal('https://wiki.archlinux.org/test-two.html');
         done();
       });
     });
 
-    it('saves the parent category page for every saved article url', function(done) {
-      scrape.category('some-url.com/Category:something').then(function(res) {
-        expect(res.articles[0].parentCategory).to.equal('A Title');
-        expect(res.articles[1].parentCategory).to.equal('A Title');
+    it('skips articles that appear in the doneList', function(done) {
+      scrape.category('some-url.com/Category:something', mockDoneList).then(function(res) {
+        expect(res.articles.length).to.equal(2);
         done();
       });
     });
 
-    it('correctly saves the subcategories', function(done) {
-      scrape.category('some-url.com/Category:something').then(function(res) {
-        expect(res.subcategories).to.be.an('array');
-        expect(res.subcategories[0]).to.be.an('object');
-        expect(res.subcategories[1].title).to.equal('second cat title');
-        expect(res.subcategories[1].url).to.equal('https://wiki.archlinux.org/index.php/Category:another_test');
+    it('also saves the url of the category page for processing as article later', function(done) {
+      scrape.category('some-url.com/Category:something', mockDoneList).then(function(res) {
+        expect(res.url).to.equal('some-url.com/Category:something');
         done();
       });
     });
@@ -119,7 +110,7 @@ describe('scrape.js', function() {
 
   describe('scrape.toc', function() {
     before(function(done) {
-      var mockRes = mock('<html><body><p>This should be ignored</p><div id="mw-content-text">This should get <strong>ignored</strong>.<dd><a href="/index.php/Category:Test One">A test</a></dd><dd><a href="/index.php/Category:Test Two">Test</a></dd><dd>also in <a href="/index.php/Category:Test One">A duplicate</a></dd></div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><p>This should be ignored</p> <div id="mw-content-text">This should get <strong>ignored</strong>.  <dd><small>1.1.</small> <a href="/index.php/Category:Test One" title="A test">A test</a><small>(also in <a href="/index.php/Category:Ignore this" title="Ignore this">Ignore this</a>)</small></dd> <dd><small>1.3.</small><a href="/index.php/Category:Test Two" title="Test">Test</a></dd> </div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
