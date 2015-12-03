@@ -18,9 +18,9 @@
     "wiki"
   ],
   "author": "Gregory Scheerlinck",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "bin": {
-    "make-arch-wiki": "bin/make.js",
+    "build-arch-wiki": "bin/make.js",
     "sync-arch-wiki": "bin/sync.js"
   },
   "bugs": {
