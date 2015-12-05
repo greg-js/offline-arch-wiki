@@ -117,8 +117,8 @@ function saveArticles(scrapedArticles) {
       log.debug(article.title + ' exists. Skipping.');
     }
     return !exists;
-  }), 'title').map(function makePromiseArrays(article) {
-    return new Promise(function newPromiseArray(resolve) {
+  }), 'title').map(function makePromises(article) {
+    return new Promise(function newPromise(resolve) {
       Promise.resolve(files.save(article, location)).then(function successSave(savedArticle) {
         doneList.push(savedArticle);
         return resolve(savedArticle);
