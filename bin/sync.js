@@ -1,13 +1,15 @@
-#!usr/bin/env node
+#!/usr/bin/env node
 
 'use strict';
 
-var util = require('util');
-var log = util.log;
-
+var util = require('../lib/util');
+var log = require('../lib/util').log;
 var scrape = require('../lib/scrape');
 var files = require('../lib/files');
+
 var path = require('path');
+
+var _ = require('lodash');
 
 var location = process.argv[2] ? path.resolve(process.argv[2], 'offline-arch-wiki') : path.resolve('content');
 
@@ -16,8 +18,6 @@ var doneList;
 
 var lastUpdated;
 var fromDate;
-// var today = util.setMidnight(new Date());
-// var yesterday = util.setDayEarlier(today);
 
 function usage() {
   console.log('Usage: sync-arch-wiki location');
@@ -28,21 +28,24 @@ function usage() {
 if (/\-h|\-\-help/.test(process.argv[2])) {
   usage();
 }
+
 // load the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb.doneList;
-  lastUpdated = loadedDb.updated;
+  lastUpdated = new Date(loadedDb.updated);
+
   if (!lastUpdated) {
     console.log('Invalid existing database. You must run `make-arch-wiki` at least once before being able to sync');
     usage();
   } else {
-    lastUpdated = new Date(lastUpdated);
-    if (lastUpdated.getTime() !== util.setMidnight(lastUpdated).getTime()) {
-      // this means we are syncing a db that was only just built
-      fromDate = util.toArchDate(util.setMidnight(lastUpdated));
-    } else {
-      // this means we are syncing a db that has been synced before
+    if (lastUpdated.getMinutes() < 3 && lastUpdated.getHours() % 6 === 0) {
+      // this means we are likely dealing with cron-run update
       fromDate = util.toArchDate(lastUpdated);
+      log.debug(lastUpdated.getHours() + ':' + lastUpdated.getMinutes());
+    } else {
+      // this means we may be dealing with a self-run update - default to midnight that day
+      fromDate = util.toArchDate(util.setMidnight(lastUpdated));
+      log.debug(lastUpdated.getHours() + ':' + lastUpdated.getMinutes());
     }
   }
   return changeLogUrl.replace(/AAAA/, fromDate);
@@ -50,29 +53,34 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   return initScrape(url);
 }).then(function updateChanges(articles) {
   return Promise.all(scrapeArticles(articles)).then(function storeArticles(scrapedArticles) {
-    return Promise.all(saveArticles(scrapedArticles)).
-      /* TODO
-       */
+    return Promise.all(saveArticles(scrapedArticles)).then(function updateDb(arts) {
+      log.info(arts.length + ' articles updated.');
+      return files.storeDb(doneList, location);
+    });
   });
-}).then(function updateDb(savedArticles) {
-
+}).then(function logDate(destination) {
+  log.info('Db saved to ' + destination);
 });
 
 // get the doneList array from the db.json file if it exists
 function loadDb(loc) {
-  return Promise.resolve(files.loadDb(path.join(loc, 'db.json'))).then(function parseList(doneListString) {
-    return JSON.parse(doneListString) || [];
+  return Promise.resolve(files.loadDb(path.join(loc, 'db.json'))).then(function parseList(db) {
+    return JSON.parse(db) || [];
   });
 }
 
 function initScrape(url) {
-  return Promise.resolve(scrape.changes(url)).then(function parseChanges(changesHTML) {
-
+  return Promise.resolve(scrape.changes(url)).then(function parseChanges(changes) {
+    return changes;
   });
 }
 
 function scrapeArticles(articles) {
-  return articles.map(function makePromises(article) {
+  if (!articles.length) {
+    log.info('No articles have been updated since the last sync. Exiting.');
+    process.exit();
+  }
+  return _.uniq(articles, 'title').map(function makePromises(article) {
     return new Promise(function newPromise(resolve, reject) {
       resolve(scrape.article(article));
     });
@@ -84,7 +92,9 @@ function saveArticles(scrapedArticles) {
   return scrapedArticles.map(function makePromises(article) {
     return new Promise(function newPromise(resolve) {
       Promise.resolve(files.save(article, location)).then(function successSave(savedArticle) {
-        doneList.push(savedArticle);
+        if (!(_.find(doneList, function findArticle(a) { return a.title === savedArticle.title; }))) {
+          doneList.push(savedArticle);
+        }
         return resolve(savedArticle);
       });
     });
