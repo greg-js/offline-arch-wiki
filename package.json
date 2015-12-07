@@ -39,6 +39,7 @@
     "logme": "^0.4.0",
     "request-promise": "^1.0.2",
     "sanitize-filename": "^1.5.3",
-    "to-markdown": "^2.0.1"
+    "to-markdown": "^2.0.1",
+    "yargs": "^3.31.0"
   }
 }

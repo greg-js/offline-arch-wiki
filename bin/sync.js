@@ -7,11 +7,24 @@ var log = require('../lib/util').log;
 var scrape = require('../lib/scrape');
 var files = require('../lib/files');
 
-var path = require('path');
-
 var _ = require('lodash');
 
-var location = process.argv[2] ? path.resolve(process.argv[2], 'offline-arch-wiki') : path.resolve('content');
+var path = require('path');
+
+var yargs = require('yargs')
+  .usage('Usage: $0 [-t target-dir] [-c cron]')
+  .default('t', path.join(__dirname, '..', 'content'))
+  .alias('t', 'target-dir')
+  .describe('t', 'path to custom local wiki location')
+  .boolean('c')
+  .default('c', false)
+  .alias('c', 'cron')
+  .describe('c', 'cron-mode (force 8h intervals)')
+  .help('h')
+  .alias('h', 'help')
+  .argv;
+
+var location = yargs.t;
 
 var changeLogUrl = 'https://wiki.archlinux.org/index.php?namespace=0&hidebots=&limit=500&from=AAAA&title=Special%3ARecentChanges';
 var doneList;
@@ -19,24 +32,18 @@ var doneList;
 var lastUpdated;
 var fromDate;
 
-function usage() {
-  console.log('Usage: sync-arch-wiki location');
-  console.log('    location (optional): path to custom location for saving the wiki (default: ./content)');
-  process.exit();
-}
-
-if (/\-h|\-\-help/.test(process.argv[2])) {
-  usage();
-}
+log.debug(location);
+log.debug(JSON.stringify(yargs));
 
 // load the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb.doneList;
   lastUpdated = new Date(loadedDb.updated);
 
+  log.debug('lastUpdated = ' + lastUpdated);
   if (!lastUpdated) {
     console.log('Invalid existing database. You must run `make-arch-wiki` at least once before being able to sync');
-    usage();
+    process.exit();
   } else {
     if (lastUpdated.getMinutes() < 3 && lastUpdated.getHours() % 6 === 0) {
       // this means we are likely dealing with cron-run update
@@ -65,7 +72,7 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
 // get the doneList array from the db.json file if it exists
 function loadDb(loc) {
   return Promise.resolve(files.loadDb(path.join(loc, 'db.json'))).then(function parseList(db) {
-    return JSON.parse(db) || [];
+    return JSON.parse(db);
   });
 }
 
