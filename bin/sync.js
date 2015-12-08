@@ -25,35 +25,24 @@ var yargs = require('yargs')
   .argv;
 
 var location = yargs.t;
-
-var changeLogUrl = 'https://wiki.archlinux.org/index.php?namespace=0&hidebots=&limit=500&from=AAAA&title=Special%3ARecentChanges';
+var cron = yargs.c;
+var changeLogUrl = 'https://wiki.archlinux.org/index.php?title=Special:RecentChanges&from=AAAA&hidebots=0&namespace=0&limit=500';
 var doneList;
 
 var lastUpdated;
 var fromDate;
-
-log.debug(location);
-log.debug(JSON.stringify(yargs));
 
 // load the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb.doneList;
   lastUpdated = new Date(loadedDb.updated);
 
-  log.debug('lastUpdated = ' + lastUpdated);
   if (!lastUpdated) {
-    console.log('Invalid existing database. You must run `make-arch-wiki` at least once before being able to sync');
+    log.error('Invalid existing database. You must run `make-arch-wiki` at least once before being able to sync');
     process.exit();
   } else {
-    if (lastUpdated.getMinutes() < 3 && lastUpdated.getHours() % 6 === 0) {
-      // this means we are likely dealing with cron-run update
-      fromDate = util.toArchDate(lastUpdated);
-      log.debug(lastUpdated.getHours() + ':' + lastUpdated.getMinutes());
-    } else {
-      // this means we may be dealing with a self-run update - default to midnight that day
-      fromDate = util.toArchDate(util.setMidnight(lastUpdated));
-      log.debug(lastUpdated.getHours() + ':' + lastUpdated.getMinutes());
-    }
+    // cron-mode has absolute date start, default checks from midnight that day
+    fromDate = (cron) ? util.toArchDate(lastUpdated) : util.toArchDate(util.setMidnight(lastUpdated));
   }
   return changeLogUrl.replace(/AAAA/, fromDate);
 }).then(function getChanges(url) {
@@ -83,10 +72,6 @@ function initScrape(url) {
 }
 
 function scrapeArticles(articles) {
-  if (!articles.length) {
-    log.info('No articles have been updated since the last sync. Exiting.');
-    process.exit();
-  }
   return _.uniq(articles, 'title').map(function makePromises(article) {
     return new Promise(function newPromise(resolve, reject) {
       resolve(scrape.article(article));
