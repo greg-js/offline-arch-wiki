@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Tool for scraping the arch wiki and keeping it updated",
   "scripts": {
-    "test": "mocha",
+    "test": "./node_modules/mocha/bin/mocha ./test",
     "patch-release": "npm version patch && npm publish && git push --follow-tags",
     "minor-release": "npm version minor && npm publish && git push --follow-tags",
     "major-release": "npm version major && npm publish && git push --folow-tags"
