@@ -30,6 +30,10 @@ describe('util.js', function() {
     it('has a mockRequest method', function() {
       expect(util.mockRequest).to.be.a('function');
     });
+
+    it('has an isGoodArticle method', function() {
+      expect(util.isGoodArticle).to.be.a('function');
+    });
   });
 
   describe('toArchDate', function() {
@@ -55,5 +59,22 @@ describe('util.js', function() {
       expect(util.setDayEarlier(new Date('July 01, 2024 19:00:00')).getTime()).to.equal((new Date('June 30, 2024 19:00:00')).getTime());
       expect(util.setDayEarlier(new Date('January 01, 2016 12:00:00')).getTime()).to.equal((new Date('December 31, 2015 12:00:00')).getTime());
     });
+  });
+
+  describe('isGoodArticle', function() {
+    it('returns false on foreign articles', function() {
+      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (简体中文)' })).to.be.false;
+      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (Русский)' })).to.be.false;
+      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (Nederlands)' })).to.be.false;
+    });
+
+    it('returns false on special articles', function() {
+      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'Special: example' })).to.be.false;
+    });
+
+    it('returns true on normal English articles', function() {
+      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example'})).to.be.true;
+    });
+
   });
 });
