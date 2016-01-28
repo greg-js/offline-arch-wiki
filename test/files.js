@@ -23,6 +23,7 @@ describe('files.js', function() {
   describe('files.save', function() {
     describe('saving files in default directory', function() {
       var dest = './' + path.join('content', '_content', 'test title.md');
+      var relativeDest = dest.substr(dest.lastIndexOf('_'));
       var article = { md: 'some content', title: 'test title' };
 
       var savedArt;
@@ -51,7 +52,7 @@ describe('files.js', function() {
       it('returns an article object ready for making links', function(done) {
         expect(savedArt).to.be.an('object');
         expect(savedArt.title).to.equal('test title');
-        expect(savedArt.path).to.equal(dest);
+        expect(savedArt.path).to.equal(relativeDest);
         done();
       });
 
