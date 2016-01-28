@@ -30,6 +30,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "mango": "0.0.4",
+    "mocha": "^2.4.4",
     "mockery": "^1.4.0"
   },
   "dependencies": {
