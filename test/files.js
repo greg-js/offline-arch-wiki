@@ -22,7 +22,7 @@ describe('files.js', function() {
 
   describe('files.save', function() {
     describe('saving files in default directory', function() {
-      var dest = path.join(process.cwd(), 'content', '_content', 'test title.md');
+      var dest = './' + path.join('content', '_content', 'test title.md');
       var article = { md: 'some content', title: 'test title' };
 
       var savedArt;
