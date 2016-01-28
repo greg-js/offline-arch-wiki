@@ -7,22 +7,26 @@ var scrape = require('../lib/scrape');
 var files = require('../lib/files');
 var path = require('path');
 
+var yargs = require('yargs')
+  .usage('Usage: $0 [-t target-dir]')
+  .default('t', path.join(__dirname, '..', 'content'))
+  .alias('t', 'target-dir')
+  .describe('t', 'path to custom local wiki location')
+  .default('c', 'https://wiki.archlinux.org/index.php/Table_of_Contents')
+  .alias('c', 'table-of-contents')
+  .describe('c', 'path or url to custom wiki TOC (default: https://wiki.archlinux.org/index.php/Table_of_Contents)')
+  .help('h')
+  .alias('h', 'help')
+  .argv;
+
 var flatten = require('lodash').flatten;
 var uniq = require('lodash').uniq;
 
-var location = process.argv[2] ? path.resolve(process.argv[2], 'offline-arch-wiki') : path.resolve('content');
-
-var toc = process.argv[3] || 'https://wiki.archlinux.org/index.php/Table_of_contents';
+var location = yargs.t;
+var toc = yargs.c;
 
 var doneList;
 var categoriesAsArticles;
-
-if (/\-h|\-\-help/.test(process.argv[2])) {
-  console.log('Usage: build-arch-wiki location wiki');
-  console.log('    location (optional): path to custom location for saving the wiki (default: ./content)');
-  console.log('    wiki     (optional): path or url to custom wiki TOC (default: https://wiki.archlinux.org/index.php/Table_of_Contents)');
-  process.exit();
-}
 
 // load in the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
