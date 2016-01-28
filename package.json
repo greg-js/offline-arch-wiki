@@ -6,7 +6,7 @@
     "test": "./node_modules/mocha/bin/mocha ./test",
     "patch-release": "npm version patch && npm publish && git push --follow-tags",
     "minor-release": "npm version minor && npm publish && git push --follow-tags",
-    "major-release": "npm version major && npm publish && git push --folow-tags"
+    "major-release": "npm version major && npm publish && git push --follow-tags"
   },
   "repository": {
     "type": "git",
