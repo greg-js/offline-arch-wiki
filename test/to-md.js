@@ -25,4 +25,16 @@ describe('toMD', function() {
   it('converts multiline code blocks correctly', function() {
     expect(toMD('Testing<pre>Hello \nWorld\n!</pre>Testing')).to.equal('Testing\n\n```\nHello \nWorld\n!\n```\n\nTesting');
   });
+
+  it('gets rid of siteSub, jump-to-nav and catlinks divs', function() {
+    expect(toMD('<div id="siteSub">Foo</div><div id="jump-to-nav">bar</div><div id="catlinks">baz</div>')).to.equal('');
+  });
+
+  it('cleans up external links', function() {
+    expect(toMD('<a href="https://www.example.com" class="external">Foo</a>')).to.equal('**Foo** (_https://www.example.com/_)');
+  });
+
+  it('cleans up internal links', function() {
+    expect(toMD('<a href="#foobar">Foo</a>')).to.equal('**Foo**');
+  });
 });
