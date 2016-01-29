@@ -33,7 +33,7 @@ describe('scrape.js', function() {
     };
 
     before(function(done) {
-      var mockRes = mock('<html><body><h1 id="firstHeading">Article Title</h1><p>This should be ignored</p><div id="content">This should get <strong>picked up</strong>.</div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><h1 id="firstHeading">Article Title</h1><p>This should be ignored</p><div id="content"><div id="mw-content-text"><p>From foobar:</p><p>The description.</p><div><p>And this should get <strong>picked up</strong>.</p></div></div></div><p>This should be ignored</p></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
@@ -49,7 +49,28 @@ describe('scrape.js', function() {
 
     it('converts the article\'s relevant html to markdown', function(done) {
       scrape.article(mockArtObj).then(function(article) {
-        expect(article.md).to.equal('This should get **picked up**.');
+        expect(article.md).to.equal('From foobar:\n\nThe description.\n\nAnd this should get **picked up**.');
+        done();
+      });
+    });
+
+    it('remembers if the article is a category', function(done) {
+      scrape.article(mockArtObj, true).then(function(article) {
+        expect(article.category).to.be.true;
+        done();
+      });
+    });
+
+    it('remembers if the article is NOT a category', function(done) {
+      scrape.article(mockArtObj, false).then(function(article) {
+        expect(article.category).to.be.false;
+        done();
+      });
+    });
+
+    it('saves the description to the article object', function(done) {
+      scrape.article(mockArtObj).then(function(article) {
+        expect(article.description).to.equal('The description.');
         done();
       });
     });

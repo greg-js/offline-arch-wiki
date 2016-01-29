@@ -39,11 +39,11 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   });
 // first scrape all the articles and convert from html to md
 }).then(function getArticles(cObjects) {
-  return Promise.all(processArticles(cObjects)).then(function parseArt(scrapedArticles) {
+  return Promise.all(processArticles(cObjects, false)).then(function parseArt(scrapedArticles) {
     return scrapedArticles;
 // then concat them into a big array with all the category pages, also scraped as articles
   }).then(function addCatArts(scrapedArticles) {
-    return Promise.all(processCategoriesAsArticles(cObjects)).then(function concatThem(scrapedCats) {
+    return Promise.all(processCategoriesAsArticles(cObjects, true)).then(function concatThem(scrapedCats) {
       return flatten(scrapedCats.filter(function filterEmpty(cObj) {
         // there may be some empty objects?
         return !!cObj.title;
