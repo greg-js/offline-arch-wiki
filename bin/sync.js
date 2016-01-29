@@ -74,7 +74,7 @@ function initScrape(url) {
 function scrapeArticles(articles) {
   return _.uniq(articles, 'title').map(function makePromises(article) {
     return new Promise(function newPromise(resolve, reject) {
-      resolve(scrape.article(article));
+      resolve(scrape.article(article, false));
     });
   });
 }

@@ -92,7 +92,7 @@ function processArticles(categoryObjects) {
       return new Promise(function newPromise(resolve) {
         var scrapedArticles = articles.map(function makePromises(article) {
           log.debug('Processing ' + article.url);
-          return Promise.resolve(scrape.article(article)).then(function successScrape(scrapedArticle) {
+          return Promise.resolve(scrape.article(article, false)).then(function successScrape(scrapedArticle) {
             return scrapedArticle;
           });
         });
@@ -108,7 +108,7 @@ function processArticles(categoryObjects) {
 function processCategoriesAsArticles(categoryObjects) {
   return categoryObjects.map(function makePromises(article) {
     return new Promise(function newPromise(resolve) {
-      resolve(scrape.article(article));
+      resolve(scrape.article(article, true));
     });
   });
 }
