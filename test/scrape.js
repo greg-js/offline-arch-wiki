@@ -54,23 +54,16 @@ describe('scrape.js', function() {
       });
     });
 
-    it('remembers if the article is a category', function(done) {
-      scrape.article(mockArtObj, true).then(function(article) {
-        expect(article.category).to.be.true;
-        done();
-      });
-    });
-
-    it('remembers if the article is NOT a category', function(done) {
-      scrape.article(mockArtObj, false).then(function(article) {
-        expect(article.category).to.be.false;
-        done();
-      });
-    });
-
     it('saves the description to the article object', function(done) {
       scrape.article(mockArtObj).then(function(article) {
         expect(article.description).to.equal('The description.');
+        done();
+      });
+    });
+
+    it('saves the url to the article object', function(done) {
+      scrape.article(mockArtObj).then(function(article) {
+        expect(article.url).to.equal('some-url.com/article_title');
         done();
       });
     });

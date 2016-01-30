@@ -56,6 +56,8 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   });
 }).then(function logDate(destination) {
   log.info('Db saved to ' + destination);
+}).catch(function catchSync(err) {
+  log.error(err);
 });
 
 // get the doneList array from the db.json file if it exists
@@ -74,7 +76,7 @@ function initScrape(url) {
 function scrapeArticles(articles) {
   return _.uniq(articles, 'title').map(function makePromises(article) {
     return new Promise(function newPromise(resolve, reject) {
-      resolve(scrape.article(article, false));
+      resolve(scrape.article(article));
     });
   });
 }
