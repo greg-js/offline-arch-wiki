@@ -8,6 +8,8 @@ var files = require('../lib/files');
 var path = require('path');
 var isGoodArticle = require('../lib/util').isGoodArticle;
 
+var ProgressBar = require('progress');
+
 var yargs = require('yargs')
   .usage('Usage: $0 [-t target-dir]')
   .default('t', path.join(__dirname, '..', 'content'))
@@ -29,6 +31,7 @@ var toc = yargs.c;
 var doneList;
 var categoriesAsArticles;
 
+var bar = null;
 // load in the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb;
@@ -85,6 +88,14 @@ function processCategories(cUrls) {
 
 // scrape the articles array in categoryObjects and scrape the content of each article
 function processArticles(categoryObjects) {
+  var scrapeABar = new ProgressBar('Scraping the wiki... [:bar] :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 25,
+    total: categoryObjects.length,
+    clear: true,
+  });
+
   return categoryObjects
     .map(function getArticleArrays(cObj) {
       return cObj.articles;
@@ -94,6 +105,7 @@ function processArticles(categoryObjects) {
         var scrapedArticles = articles.map(function makePromises(article) {
           log.debug('Processing ' + article.url);
           return Promise.resolve(scrape.article(article)).then(function successScrape(scrapedArticle) {
+            scrapeABar.tick();
             return scrapedArticle;
           });
         });
@@ -107,15 +119,30 @@ function processArticles(categoryObjects) {
 
 // scrape category pages as if they were articles
 function processCategoriesAsArticles(categoryObjects) {
+  var scrapeCBar = new ProgressBar('Scraping the category pages... [:bar] :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 25,
+    total: categoryObjects.length,
+    clear: true,
+  });
   return categoryObjects.map(function makePromises(article) {
     return new Promise(function newPromise(resolve) {
-      resolve(scrape.article(article));
+      resolve(scrape.article(article, scrapeCBar));
     });
   });
 }
 
 // save an array of articles after testing whether they already exist
 function saveArticles(scrapedArticles) {
+  var saveBar = new ProgressBar('Saving to disk... [:bar] :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 25,
+    total: scrapedArticles.length,
+    clear: true,
+  });
+
   return uniq(scrapedArticles.filter(function filterArticles(article) {
     var exists = existsAlready(article, doneList);
     if (exists) {
@@ -125,6 +152,7 @@ function saveArticles(scrapedArticles) {
   }), 'title').map(function makePromises(article) {
     return new Promise(function newPromise(resolve) {
       Promise.resolve(files.save(article, location)).then(function successSave(savedArticle) {
+        saveBar.tick();
         doneList.push(savedArticle);
         return resolve(savedArticle);
       });

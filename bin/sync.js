@@ -11,6 +11,8 @@ var _ = require('lodash');
 
 var path = require('path');
 
+var ProgressBar = require('progress');
+
 var yargs = require('yargs')
   .usage('Usage: $0 [-t target-dir] [-c cron]')
   .default('t', path.join(__dirname, '..', 'content'))
@@ -32,6 +34,7 @@ var doneList;
 var lastUpdated;
 var fromDate;
 
+var bar = null;
 // load the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb.doneList;
@@ -75,20 +78,37 @@ function initScrape(url) {
 
 function scrapeArticles(articles) {
   return _.uniq(articles, 'title').map(function makePromises(article) {
+    var scrapeBar = scrapeBar || new ProgressBar('Syncing local wiki... [:bar] :percent :etas', {
+      complete: '=',
+      incomplete: ' ',
+      width: 25,
+      total: articles.length,
+      clear: true,
+    });
+
     return new Promise(function newPromise(resolve, reject) {
-      resolve(scrape.article(article));
+      resolve(scrape.article(article, scrapeBar));
     });
   });
 }
 
 // save an array of articles
 function saveArticles(scrapedArticles) {
+  var saveBar = saveBar || new ProgressBar('Saving changes... [:bar] :percent :etas', {
+    complete: '=',
+    incomplete: ' ',
+    width: 25,
+    total: scrapedArticles.length,
+    clear: true,
+  });
+
   return scrapedArticles.map(function makePromises(article) {
     return new Promise(function newPromise(resolve) {
       Promise.resolve(files.save(article, location)).then(function successSave(savedArticle) {
         if (!(_.find(doneList, function findArticle(a) { return a.title === savedArticle.title; }))) {
           doneList.push(savedArticle);
         }
+        saveBar.tick();
         return resolve(savedArticle);
       });
     });
