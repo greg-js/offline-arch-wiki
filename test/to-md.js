@@ -30,4 +30,8 @@ describe('toMD', function() {
     expect(toMD('<div id="siteSub">Foo</div><div id="jump-to-nav">bar</div><div id="catlinks">baz</div>')).to.equal('');
   });
 
+  it('gets rid of sup tags', function() {
+    expect(toMD('<div id="jopla">Foo<sup>adhfladkfjhadslfkj</sup></div><div><a href="www.bar.com">Foo</a> <sup><a href="www.baz.com">bam</a></div>')).to.equal('Foo\n\n[Foo](www.bar.com)');
+  });
+
 });
