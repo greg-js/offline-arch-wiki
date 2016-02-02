@@ -6,6 +6,7 @@ var log = require('../lib/util').log;
 var scrape = require('../lib/scrape');
 var files = require('../lib/files');
 var path = require('path');
+var isGoodArticle = require('../lib/util').isGoodArticle;
 
 var yargs = require('yargs')
   .usage('Usage: $0 [-t target-dir]')
@@ -44,9 +45,9 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
 // then concat them into a big array with all the category pages, also scraped as articles
   }).then(function addCatArts(scrapedArticles) {
     return Promise.all(processCategoriesAsArticles(cObjects)).then(function concatThem(scrapedCats) {
-      return flatten(scrapedCats.filter(function filterEmpty(cObj) {
-        // there may be some empty objects?
-        return !!cObj.title;
+      return flatten(scrapedCats.filter(function filterOutBadArticles(cObj) {
+        // there may be some empty or foreign articles here so filter them out
+        return !!isGoodArticle(cObj);
       }).concat(scrapedArticles));
     });
   });
