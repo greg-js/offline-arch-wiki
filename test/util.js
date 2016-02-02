@@ -34,6 +34,10 @@ describe('util.js', function() {
     it('has an isGoodArticle method', function() {
       expect(util.isGoodArticle).to.be.a('function');
     });
+
+    it('has a getDateFromLastmod method', function() {
+      expect(util.getDateFromLastmod).to.be.a('function');
+    });
   });
 
   describe('toArchDate', function() {
@@ -44,7 +48,15 @@ describe('util.js', function() {
     });
   });
 
+  describe('toArchDate', function() {
+    it('converts a lastmod date string to a JS date object', function() {
+      expect(util.getDateFromLastmod('This page was last modified on 2 February 2016, at 16:11.').toString()).to.equal(new Date('February 2, 2016 16:11:00').toString());
+      expect(util.getDateFromLastmod('This page was last modified on 15 December 2014, at 20:00.').toString()).to.equal(new Date('December 15, 2014 20:00:00').toString());
+      expect(util.getDateFromLastmod('This page was last modified on 14 August 2017, at 06:48.').toString()).to.equal(new Date('August 14, 2017 06:48:00').toString());
+    });
+  });
   describe('setMidnight', function() {
+
     it('sets given JS date objects to midnight that day', function() {
       expect(util.setMidnight(new Date('December 04, 2015 04:20:00')).getTime()).to.equal((new Date('December 04, 2015 00:00:00')).getTime());
       expect(util.setMidnight(new Date('January 20, 2000 12:04:58')).getTime()).to.equal((new Date('January 20, 2000 00:00:00')).getTime());

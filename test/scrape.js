@@ -33,7 +33,7 @@ describe('scrape.js', function() {
     };
 
     before(function(done) {
-      var mockRes = mock('<html><body><h1 id="firstHeading">Article Title</h1><p>This should be ignored</p><div id="content"><div id="mw-content-text"><p>From foobar:</p><p>The description.</p><div><p>And this should get <strong>picked up</strong>.</p></div></div></div><p>This should be ignored</p></body></html>');
+      var mockRes = mock('<html><body><h1 id="firstHeading">Article Title</h1><p>This should be ignored</p><div id="content"><div id="mw-content-text"><p>From foobar:</p><p>The description.</p><div><p>And this should get <strong>picked up</strong>.</p></div></div></div><p>This should be ignored</p><ul><li id="lastmod"> This page was last modified on 2 February 2016, at 16:11.</li></ul></body></html>');
       mockery.enable(mockeryConfig);
       mockery.registerAllowable('../lib/scrape', true);
       mockery.registerMock('request-promise', mockRes);
@@ -64,6 +64,13 @@ describe('scrape.js', function() {
     it('saves the url to the article object', function(done) {
       scrape.article(mockArtObj).then(function(article) {
         expect(article.url).to.equal('some-url.com/article_title');
+        done();
+      });
+    });
+
+    it('saves the modification date to the article object', function(done) {
+      scrape.article(mockArtObj).then(function(article) {
+        expect(article.lastMod.toString()).to.equal(new Date('2 February 2016, 16:11:00').toString());
         done();
       });
     });
