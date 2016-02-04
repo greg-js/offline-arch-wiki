@@ -58,12 +58,14 @@ Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   });
 }).then(function successMake(loc) {
   log.debug('Db saved to ' + loc);
+}).catch(function catchAll(err) {
+  log.error(err);
 });
 
 // get the doneList array from the db.json file if it exists
 function loadDb(loc) {
   return Promise.resolve(files.loadDb(path.join(loc, 'db.json'))).then(function parseList(doneListString) {
-    return JSON.parse(doneListString).doneList || [];
+    return JSON.parse(doneListString).doneList;
   });
 }
 
