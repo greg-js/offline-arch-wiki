@@ -7,6 +7,7 @@ var scrape = require('../lib/scrape');
 var files = require('../lib/files');
 var path = require('path');
 var isGoodArticle = require('../lib/util').isGoodArticle;
+var fetch = require('../lib/fetch');
 
 var yargs = require('yargs')
   .usage('Usage: $0 [-t target-dir]')
@@ -29,38 +30,48 @@ var toc = yargs.c;
 var doneList;
 var categoriesAsArticles;
 
+var opts = yargs.opts || {};
+
 // load in the database if it exists
 Promise.resolve(loadDb(location)).then(function parseDb(loadedDb) {
   doneList = loadedDb;
-  return initScrape(toc);
-// dig through the toc to get to all categories and then find the urls to all articles within them
-}).then(function getCategories(catUrls) {
-  return Promise.all(processCategories(catUrls)).then(function parseCat(cObjects) {
-    return cObjects;
-  });
-// first scrape all the articles and convert from html to md
-}).then(function getArticles(cObjects) {
-  return Promise.all(processArticles(cObjects)).then(function parseArt(scrapedArticles) {
-    return scrapedArticles;
-// then concat them into a big array with all the category pages, also scraped as articles
-  }).then(function addCatArts(scrapedArticles) {
-    return Promise.all(processCategoriesAsArticles(cObjects)).then(function concatThem(scrapedCats) {
-      return flatten(scrapedCats.filter(function filterOutBadArticles(cObj) {
-        // there may be some empty or foreign articles here so filter them out
-        return !!isGoodArticle(cObj);
-      }).concat(scrapedArticles));
-    });
-  });
-// now save the whole array of articles to disk and save the database
-}).then(function storeArticles(scrapedArticles) {
-  return Promise.all(saveArticles(scrapedArticles)).then(function updateDb() {
-    return files.storeDb(doneList, location);
-  });
-}).then(function successMake(loc) {
-  log.debug('Db saved to ' + loc);
-}).catch(function catchAll(err) {
-  log.error(err);
+  return fetch.buildUrlList(opts);
+}).then(function processUrlList(urlList) {
+  return fetch.buildArticleObjectList(urlList, opts);
+}).then(function write(articleObjectList) {
+  return require('fs').writeFile(require('path').resolve('/tmp/results'), JSON.stringify(articleObjectList));
+}).then(function done() {
+  console.log('done');
+}).catch(function oops(err) {
+  console.log(err);
 });
+// .then(function getCategories(catUrls) {
+//   return Promise.all(processCategories(catUrls)).then(function parseCat(cObjects) {
+//     return cObjects;
+//   });
+// // first scrape all the articles and convert from html to md
+// }).then(function getArticles(cObjects) {
+//   return Promise.all(processArticles(cObjects)).then(function parseArt(scrapedArticles) {
+//     return scrapedArticles;
+// // then concat them into a big array with all the category pages, also scraped as articles
+//   }).then(function addCatArts(scrapedArticles) {
+//     return Promise.all(processCategoriesAsArticles(cObjects)).then(function concatThem(scrapedCats) {
+//       return flatten(scrapedCats.filter(function filterOutBadArticles(cObj) {
+//         // there may be some empty or foreign articles here so filter them out
+//         return !!isGoodArticle(cObj);
+//       }).concat(scrapedArticles));
+    // });
+  // });
+// // now save the whole array of articles to disk and save the database
+// }).then(function storeArticles(scrapedArticles) {
+//   return Promise.all(saveArticles(scrapedArticles)).then(function updateDb() {
+//     return files.storeDb(doneList, location);
+//   });
+// }).then(function successMake(loc) {
+//   log.debug('Db saved to ' + loc);
+// }).catch(function catchAll(err) {
+//   log.error(err);
+// });
 
 // get the doneList array from the db.json file if it exists
 function loadDb(loc) {
