@@ -15,7 +15,7 @@ describe('toMD', function() {
   });
 
   it('converts divs correctly', function() {
-    expect(toMD('Testing<div class="test">Hello World.</div>Testing')).to.equal('Testing\n\nHello World.\n\nTesting');
+    expect(toMD('Testing<div class="test">Hello World.</div>Testing')).to.equal('Testing\nHello World.\nTesting');
   });
 
   it('converts inline code snippets correctly', function() {
@@ -23,7 +23,7 @@ describe('toMD', function() {
   });
 
   it('converts multiline code blocks correctly', function() {
-    expect(toMD('Testing<pre>Hello \nWorld\n!</pre>Testing')).to.equal('Testing\n\n```\nHello \nWorld\n!\n```\n\nTesting');
+    expect(toMD('Testing<pre>Hello \nWorld\n!</pre>Testing')).to.equal('Testing\n```\nHello \nWorld\n!\n```\nTesting');
   });
 
   it('gets rid of siteSub, jump-to-nav and catlinks divs', function() {
