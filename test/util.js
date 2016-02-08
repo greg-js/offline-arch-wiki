@@ -31,12 +31,16 @@ describe('util.js', function() {
       expect(util.mockRequest).to.be.a('function');
     });
 
-    it('has an isGoodArticle method', function() {
-      expect(util.isGoodArticle).to.be.a('function');
-    });
-
     it('has a getDateFromLastmod method', function() {
       expect(util.getDateFromLastmod).to.be.a('function');
+    });
+
+    it('has a detectLanguage method', function() {
+      expect(util.detectLanguage).to.be.a('function');
+    });
+
+    it('has a makeDescription method', function() {
+      expect(util.makeDescription).to.be.a('function');
     });
   });
 
@@ -73,20 +77,48 @@ describe('util.js', function() {
     });
   });
 
-  describe('isGoodArticle', function() {
-    it('returns false on foreign articles', function() {
-      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (简体中文)' })).to.be.false;
-      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (Русский)' })).to.be.false;
-      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example (Nederlands)' })).to.be.false;
+  describe('detectLanguage', function() {
+    it('returns the language on foreign language', function() {
+      expect(util.detectLanguage('The Arch Way (Ελληνικά)')).to.equal('greek');
+      expect(util.detectLanguage('The Arch Way (Indonesia)')).to.equal('indonesian');
+      expect(util.detectLanguage('The Arch Way (简体中文)')).to.equal('chinesesim');
     });
 
-    it('returns false on special articles', function() {
-      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'Special: example' })).to.be.false;
+    it('defaults to english when no language is specified', function() {
+      expect(util.detectLanguage('The Arch Way')).to.equal('english');
+      expect(util.detectLanguage('The Arch Way (foo bar)')).to.equal('english');
+    });
+  });
+
+  describe('makeDescription', function() {
+    it('returns the first paragraph in normal cases', function() {
+      expect(util.makeDescription('Foo bar.\nBam Baz.')).to.equal('Foo bar.');
+      expect(util.makeDescription('Foo\nBar\nBam\nBaz')).to.equal('Foo');
     });
 
-    it('returns true on normal English articles', function() {
-      expect(util.isGoodArticle({ url: 'http://www.example.com', title: 'example'})).to.be.true;
+    it('skips newlines', function() {
+      expect(util.makeDescription('\nFoo\nBar')).to.equal('Foo');
+      expect(util.makeDescription('\n\n\n\n\nFoo\n\nBar')).to.equal('Foo');
     });
 
+    it('skips category and language links', function() {
+      expect(util.makeDescription('[[Category:Foo]]\nBar\nBaz')).to.equal('Bar');
+      expect(util.makeDescription('[[fr:Baz]]\n[[Category:Foo]]\n\nFoo\n[[Bar]]\nBaz')).to.equal('Foo');
+    });
+
+    it('skips related articles and Note paragraphs', function() {
+      expect(util.makeDescription('{{Related articles}}\n{{Related|Foo}}\nFoo bar\nbar baz bam')).to.equal('Foo bar');
+      expect(util.makeDescription('[[Category:Foo]]\n{{Note|Bar}}\nBaz\nbam')).to.equal('Baz');
+    });
+
+    it('returns paragraphs while cleaning up AUR, Pkg and other links', function() {
+      expect(util.makeDescription('[[Category:Foo]]\n{{AUR|Foo}} bar\nbaz bam')).to.equal('Foo bar');
+      expect(util.makeDescription('\n\n{{Pkg|foo}} {{ic|bar}}\nbam')).to.equal('foo bar');
+    });
+
+    it('defaults to everything if there is only one paragraph (left)', function() {
+      expect(util.makeDescription('Foo')).to.equal('Foo');
+      expect(util.makeDescription('\n\n\n\n\nfoo')).to.equal('foo');
+    });
   });
 });
