@@ -8,6 +8,7 @@ var util = require('../lib/util');
 var Logme = require('logme').Logme;
 
 var Promise = require('bluebird');
+var _ = require('lodash');
 
 describe('util.js methods', function() {
   describe('public api', function() {
@@ -59,14 +60,17 @@ describe('util.js methods', function() {
 
   describe('splitLanguages', function() {
     var articleObjectList = [{ title: 'foo' }, { title: 'foo (Italiano)' }, { title: 'foo (简体中文)' }, { title: 'bar (简体中文)' }];
-    it('should split the object by language', function() {
-      expect(util.splitLanguages(articleObjectList)).to.have.all.keys('english', 'italian', 'chinesesim');
+    it('should return an array of article objects', function() {
+      expect(util.splitLanguages(articleObjectList)).to.be.an('array');
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'english' })).to.be.truthy;
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'italian' })).to.be.truthy;
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'chinesesim' })).to.be.truthy;
     });
 
     it('should pass along the now categorized article objects', function() {
-      expect(util.splitLanguages(articleObjectList).english.length).to.equal(1);
-      expect(util.splitLanguages(articleObjectList).italian.length).to.equal(1);
-      expect(util.splitLanguages(articleObjectList).chinesesim.length).to.equal(2);
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'english' }).articles.length).to.equal(1);
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'italian' }).articles.length).to.equal(1);
+      expect(_.find(util.splitLanguages(articleObjectList), { lang: 'chinesesim' }).articles.length).to.equal(2);
     });
   });
 
