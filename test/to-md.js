@@ -3,35 +3,103 @@
 'use strict';
 
 var expect = require('chai').expect;
-var toMD = require('../lib/to-md');
+var toMD = require('../lib/to-md').convert;
 
 describe('toMD', function() {
-  it('converts simple html into valid markdown', function() {
-    expect(toMD('<p>Hello <strong>World</strong>.</p>')).to.equal('Hello **World**.');
+
+  it('should convert bold and emphasized text', function() {
+    expect(toMD('\'\'\'foo\'\'\'bar')).to.equal('**foo**bar');
+    expect(toMD('\'\'foo\'\'bar')).to.equal('*foo*bar');
+    expect(toMD('\'\'\'\'\'foo\'\'\'\'\'bar')).to.equal('**_foo_**bar');
+    expect(toMD('\'\'italics\'\', \'\'\'bold\'\'\', and \'\'\'\'\'both\'\'\'\'\'')).to.equal('*italics*, **bold**, and **_both_**');
   });
 
-  it('converts spans correctly', function() {
-    expect(toMD('Hello <span id="test">World</span>.')).to.equal('Hello World.');
+  it('should convert internal links', function() {
+    expect(toMD('[[copy edit]]')).to.equal('**copy edit**');
+    expect(toMD('[[copy edit]]ors')).to.equal('**copy edit**ors');
   });
 
-  it('converts divs correctly', function() {
-    expect(toMD('Testing<div class="test">Hello World.</div>Testing')).to.equal('Testing\nHello World.\nTesting');
+  it('should convert piped and hashed links', function() {
+    expect(toMD('[[Android (operating system)|Android]]')).to.equal('**Android**');
+    expect(toMD('[[Frog#Locomotion]]')).to.equal('**Locomotion**');
+    expect(toMD('[[Frog#Locomotion|the movement of frogs]]')).to.equal('**the movement of frogs**');
   });
 
-  it('converts inline code snippets correctly', function() {
-    expect(toMD('Hello <pre>World</pre>.')).to.equal('Hello `World` .');
+  it('should convert plain links and named links', function() {
+    expect(toMD('http://www.wikipedia.org')).to.equal('*http://www.wikipedia.org*');
+    expect(toMD('[http://www.wikipedia.org]')).to.equal('*http://www.wikipedia.org*');
+    expect(toMD('[http://www.wikipedia.org wikipedia]')).to.equal('**wikipedia** (*http://www.wikipedia.org*)');
   });
 
-  it('converts multiline code blocks correctly', function() {
-    expect(toMD('Testing<pre>Hello \nWorld\n!</pre>Testing')).to.equal('Testing\n```\nHello \nWorld\n!\n```\nTesting');
+  it('should convert ordered and unordered lists', function() {
+    expect(toMD('# foo')).to.equal('1. foo');
+    expect(toMD('* foo')).to.equal('+ foo');
+    expect(toMD('** foo')).to.equal('  + foo');
+    expect(toMD('#* foo')).to.equal('  + foo');
+    expect(toMD('*# foo')).to.equal('  1. foo');
+    expect(toMD('## foo')).to.equal('  1. foo');
+    expect(toMD('##*# foo')).to.equal('      1. foo');
   });
 
-  it('gets rid of siteSub, jump-to-nav and catlinks divs', function() {
-    expect(toMD('<div id="siteSub">Foo</div><div id="jump-to-nav">bar</div><div id="catlinks">baz</div>')).to.equal('');
+  it('should convert definition lists', function() {
+    expect(toMD('; Foo')).to.equal('**Foo**');
+    expect(toMD(': bar')).to.equal('\tbar');
+    expect(toMD('; Foo: bar')).to.equal('**Foo**\n\tbar');
   });
 
-  it('gets rid of sup tags', function() {
-    expect(toMD('<div id="jopla">Foo<sup>adhfladkfjhadslfkj</sup></div><div><a href="www.bar.com">Foo</a> <sup><a href="www.baz.com">bam</a></div>')).to.equal('Foo\n\n[Foo](www.bar.com)');
+  it('should convert inline code', function() {
+    expect(toMD('{{ic|test}}')).to.equal('`test`');
+    expect(toMD('foo bar {{ic|test}} baz {{ic|bam}} bar')).to.equal('foo bar `test` baz `bam` bar');
   });
 
+  it('should convert block code without headers', function() {
+    expect(toMD('{{bc|code}}')).to.equal('```\ncode\n```');
+  });
+
+  it('should convert block code with headers', function() {
+    expect(toMD('{{hc|head|code}}')).to.equal('```\nhead\ncode\n```');
+  });
+
+  it('should ignore these edge cases', function() {
+    expect(toMD('[foo]')).to.equal('[foo]');
+  });
+
+  it('should convert strikethroughs', function() {
+    expect(toMD('foo <s>bar</s> baz')).to.equal('foo ~~bar~~ baz');
+  });
+
+  it('should convert underlines', function() {
+    expect(toMD('foo <u>bar</u> baz')).to.equal('foo _bar_ baz');
+  });
+
+  it('should delete comments', function() {
+    expect(toMD('<!-- this is a comment -->')).to.equal('');
+    expect(toMD('<!-- this is a comment -->foo bar')).to.equal('foo bar');
+  });
+
+  it('should convert headers', function() {
+    expect(toMD('== header 2 ==')).to.equal('## header 2');
+    expect(toMD('===== header 5 =====')).to.equal('##### header 5');
+  });
+
+  it('should convert colon-indentation to tabs', function() {
+    expect(toMD(':foo')).to.equal('\tfoo');
+    expect(toMD('::::foo bar')).to.equal('\t\t\t\tfoo bar');
+    expect(toMD('foo ::bar')).to.equal('foo ::bar');
+  });
+
+  it('should convert templates', function() {
+    expect(toMD('{{AUR|a package}}')).to.equal('**a package** (*AUR*)');
+    expect(toMD('{{Tip|foo}}')).to.equal('**Tip**: *foo*');
+  });
+
+  it('should convert tables', function() {
+    expect(toMD('{| class="wikitable"')).to.equal('');
+    expect(toMD('|+ Tabular data')).to.equal('**_Tabular data_**');
+    expect(toMD('! Distro !! Color')).to.equal('Distro | Color\n--- | ---');
+    expect(toMD('! Distro !! Color !! Foo !! Bar')).to.equal('Distro | Color | Foo | Bar\n--- | --- | --- | ---');
+    expect(toMD('| Ubuntu || Orange || Blue')).to.equal('Ubuntu | Orange | Blue');
+    expect(toMD('|-')).to.equal('');
+    expect(toMD('|}')).to.equal('');
+  });
 });
