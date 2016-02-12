@@ -3,7 +3,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var toMD = require('../lib/to-md').convert;
+var toMD = require('wikitext2markdown');
 
 describe('toMD', function() {
 

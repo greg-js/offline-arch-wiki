@@ -10,7 +10,7 @@ var Logme = require('logme').Logme;
 var Promise = require('bluebird');
 var _ = require('lodash');
 
-describe('util.js methods', function() {
+describe('util.js', function() {
   describe('public api', function() {
     it('should export 9 methods', function() {
       expect(util.log).to.be.an.instanceof(Logme);
@@ -108,14 +108,9 @@ describe('util.js methods', function() {
       expect(util.makeDescription('[[Category:Foo]]\n{{Note|Bar}}\nBaz\nbam')).to.equal('Baz');
     });
 
-    it('should return paragraphs while cleaning up AUR, Pkg and other links', function() {
-      expect(util.makeDescription('[[Category:Foo]]\n{{AUR|Foo}} bar\nbaz bam')).to.equal('Foo bar');
-      expect(util.makeDescription('\n\n{{Pkg|foo}} {{ic|bar}}\nbam')).to.equal('foo bar');
-    });
-
-    it('should default to everything if there is only one paragraph (left)', function() {
+    it('should default to the last or penultimate paragraph if there are less than three (left)', function() {
       expect(util.makeDescription('Foo')).to.equal('Foo');
-      expect(util.makeDescription('\n\n\n\n\nfoo')).to.equal('foo');
+      expect(util.makeDescription('\n\n\n\n\nfoo')).to.equal('');
     });
   });
 });
