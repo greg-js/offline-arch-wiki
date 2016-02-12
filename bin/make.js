@@ -35,7 +35,7 @@ loadState(location).then(function parseDb(loadedDb) {
 }).then(function storeState(finishedObjectList) {
   return storeDb(finishedObjectList, location);
 }).then(function done() {
-  log.error('Local copy saved to ' + location);
+  log.info('Local copy saved to ' + location);
 }).catch(function oops(err) {
   log.error(err.message);
   log.error(err.stack);
