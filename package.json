@@ -35,13 +35,13 @@
   },
   "dependencies": {
     "bluebird": "^3.0.6",
-    "cheerio": "^0.19.0",
     "lodash": "^3.10.1",
     "logme": "^0.4.0",
     "nodemw": "^0.8.1",
     "request-promise": "^1.0.2",
     "sanitize-filename": "^1.5.3",
     "to-markdown": "^2.0.1",
+    "wikitext2markdown": "0.0.1",
     "yargs": "^3.31.0"
   }
 }

@@ -20,6 +20,12 @@ var yargs = require('yargs')
   .default('t', path.join(__dirname, '..', 'content'))
   .alias('t', 'target-dir')
   .describe('t', 'path to custom local wiki location')
+  .default('w', false)
+  .alias('w', 'wikitext')
+  .describe('w', 'fetch wikitext (much faster, but difficult to parse)')
+  .default('m', true)
+  .alias('m', 'markdown')
+  .describe('m', 'fetch markdown (slow, but easy to parse)')
   // .boolean('c')
   // .default('c', false)
   // .alias('c', 'cron')
@@ -36,6 +42,8 @@ var lastUpdated;
 var opts = yargs.opts || {};
 var len;
 
+var doWikitext = yargs.w;
+
 // load the database if it exists
 loadState(location).then(function fetchChanges(loadedDb) {
   var fromDate;
@@ -49,14 +57,14 @@ loadState(location).then(function fetchChanges(loadedDb) {
   // cron-mode has absolute date start, default checks from midnight that day
   // fromDate = (cron) ? lastUpdated : setMidnight(lastUpdated);
   fromDate = setMidnight(lastUpdated);
-  return buildSyncList(opts, fromDate);
+  return buildSyncList(opts, fromDate, doWikitext);
 }).then(function splitArticleObjects(syncObjectList) {
   len = syncObjectList.length;
   return splitLanguages(syncObjectList);
 }).then(function updateArticles(splitObjectList) {
-  return saveToDisk(splitObjectList, location);
+  return saveToDisk(splitObjectList, location, doWikitext);
 }).then(function storeState(newDb) {
-  return updateDb(oldDb, newDb, location);
+  return updateDb(oldDb, newDb, location, doWikitext);
 }).then(function done() {
   log.info(len + ' articles updated.');
 }).catch(function oops(err) {
