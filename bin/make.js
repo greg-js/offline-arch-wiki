@@ -9,7 +9,6 @@ var buildArticleObjectList = require('../lib/fetch').buildArticleObjectList;
 var save = require('../lib/files').saveEverything;
 var loadDb = require('../lib/files').loadDb;
 var storeDb = require('../lib/files').storeDb;
-var fixDb = require('../lib/util').fixDb;
 
 var yargs = require('yargs')
   .usage('Usage: $0 [-t target-dir]')

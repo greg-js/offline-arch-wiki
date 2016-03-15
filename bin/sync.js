@@ -26,16 +26,11 @@ var yargs = require('yargs')
   .default('m', true)
   .alias('m', 'markdown')
   .describe('m', 'fetch markdown (slow, but easy to parse)')
-  // .boolean('c')
-  // .default('c', false)
-  // .alias('c', 'cron')
-  // .describe('c', 'cron-mode (force 8h intervals)')
   .help('h')
   .alias('h', 'help')
   .argv;
 
 var location = yargs.t;
-// var cron = yargs.c;
 var oldDb;
 
 var lastUpdated;
