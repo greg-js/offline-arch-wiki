@@ -22,6 +22,7 @@ describe('util.js', function() {
       expect(util.detectLanguage).to.be.a('function');
       expect(util.splitLanguages).to.be.a('function');
       expect(util.makeDescription).to.be.a('function');
+      expect(util.sanitize).to.be.a('function');
     });
   });
 
@@ -87,6 +88,18 @@ describe('util.js', function() {
     });
   });
 
+  describe('sanitize', function() {
+    it('should translate language names into English', function() {
+      expect(util.sanitize('Foo')).to.equal('Foo');
+      expect(util.sanitize('Foo (ไทย)')).to.equal('Foo (thai)');
+      expect(util.sanitize('Foo (日本語)')).to.equal('Foo (japanese)');
+    });
+
+    it('should sanitize filenames, replacing with dash (\-)', function() {
+      expect(util.sanitize('Foo *bar?')).to.equal('Foo -bar-');
+    });
+  });
+
   describe('makeDescription', function() {
     it('should return the first paragraph in normal cases', function() {
       expect(util.makeDescription('Foo bar.\nBam Baz.')).to.equal('Foo bar.');
@@ -98,9 +111,8 @@ describe('util.js', function() {
       expect(util.makeDescription('\n\n\n\n\nFoo\n\nBar')).to.equal('Foo');
     });
 
-    it('should skip category and language links', function() {
+    it('should skip category links', function() {
       expect(util.makeDescription('[[Category:Foo]]\nBar\nBaz')).to.equal('Bar');
-      expect(util.makeDescription('[[fr:Baz]]\n[[Category:Foo]]\n\nFoo\n[[Bar]]\nBaz')).to.equal('Foo');
     });
 
     it('should skip related articles and Note paragraphs', function() {
@@ -110,7 +122,7 @@ describe('util.js', function() {
 
     it('should default to the last or penultimate paragraph if there are less than three (left)', function() {
       expect(util.makeDescription('Foo')).to.equal('Foo');
-      expect(util.makeDescription('\n\n\n\n\nfoo')).to.equal('');
+      expect(util.makeDescription('\n\n\n\n\nfoo')).to.equal('foo');
     });
   });
 });
